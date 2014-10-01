@@ -1,0 +1,4 @@
+gometa
+======
+
+metadata on golang
