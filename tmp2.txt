@@ -1,0 +1,315 @@
+查询sessionId未关闭,事务未提交,
+(?msi)GetSessionId\(\)((?!(CloseSession\(sessionId\))).)*(func )
+(?msi)GetTxnId\(sessionId\)((?!(commit)).)*(func )
+
+PayPact	付款条款,没用到,---------------------to delete----------------------,
+
+默认值,被用不可改,不可复制,列表页的多选选择,
+
+基础资料,挨个开发,
+ArticleType	项目类别,用到,finish,被用关联添加,
+Article	项目		被收款单用到,finish,被用关联添加,
+ProviderType	供应商类别,finish,被用关联添加,
+Provider	供应商,用到,finish,pass,被用关联添加,
+CurrencyType	币别,用到,finish,pass,被用关联添加,
+Bank	银行资料,用到,pass,finish,被用关联添加,
+MeasureUnit	计量单位,用到,finish,被用关联添加,
+CashAccount	现金账户,用到,pass,finish,被用关联添加,
+CustomerType	客户类别,用到,pass,被用关联添加,
+Customer	客户,用到,pass,被用关联添加,
+SysUser	系统用户,用到,pass,被用关联添加,
+TaxType	税率类别,用到,pass,finish,被用关联添加,
+BalanceType	结算方式,用到,pass,finish,被用关联添加,
+IncomeType	收入费用类别,用到,pass,finish,
+IncomeItem	收入费用项目,用到,pass,finish,
+BankAccount	银行账户,用到,pass,比较难搞,finish,
+AccountingPeriod	会计期,finish,被用关联添加,
+
+找一个东东进行选择器的开发,
+
+单据类型:
+BillType	单据类型,用到,finish,
+
+单据类型参数:
+BillReceiveTypeParameter	收款单类型参数,finish,被用关联添加,
+BillPaymentTypeParameter	付款单类型参数,finish,被用关联添加,
+
+系统参数:
+SystemParameter	系统参数,用到,pass,
+
+
+初始化:
+AccountInit	账户初始化,用到,pass,需要完成button的选回的配置实现,finish,
+现户账户初始化,finish,
+
+单据:
+GatheringBill	收款单,用到,finish,
+PayBill	付款单,用到,finish,
+报表:
+AccountInOut	月档,used,finish,
+AccountInOutItem	日记账明细,finish,
+
+list_bbspost,
+list_bbspostreply,
+form_bbspost,
+form_bbspostadminremark,
+list_bbspostadmin,
+list_bbspostadminreply,
+
+
+再加个意见反馈的东东?
+帖子列表,
+主帖:id,标题,类型,内容,最后回复时间,最后回复人,创建时间倒序,管理员备注,
+回复:id,回复内容,主帖id,创建人,创建时间,每次回得过后,要更新主帖的最后回复人,回复时间,
+
+id,类型,标题,内容,主帖id,最后回复时间,最后回复人,
+
+
+主帖与回复放一起,方便排序,
+加个类型区分,
+
+帖子阅读表:id,主帖id,阅读人,最后阅读时间,
+
+
+加id进行折腾了,从
+
+需要的数据源文件:
+	ds_bbspost,finish,
+	ds_bbspostread,finish,
+	
+list列表文件:
+	list_bbspost,点击意见反馈后,出来的,		add config file,
+	list_bbspostreply,点击具体的帖子后,出来的,但是需要自定义界面,
+		里面点击回复时,页面最下方出来输入框,
+	list_bbspostadmin,管理员界面,点击某条记录后,进入,另一个操作是备注:
+	list_bbspostadminreply界面,多了一个备注的按钮,
+
+form列表文件:
+	form_bbspost,在list_bbspost中,点击新建后跳转		add config file,
+	form_bbspostadminremark,list_bbspostadmin和list_bbspostadminreply中点击备注跳转,
+
+1.简单的增删改查,
+	list_bbspost,finish,
+	form_bbspost,finish,
+2.开始添加保存时业务,
+	afterSaveData,		bbspostread,
+	afterDeleteData,	bbspostread,
+action,
+	bbspost(包含管理员的备注操作),
+	
+3.点击查看,进入 list_bbspostreply 页面,这个页面需要自己折腾一番,直接用td来操作了,finish,
+3.1.给所有的页面都添加上 <security byUnit="true" />,finish,
+3.1.1.添加 ds_unit,要参考 afterket的东东,同时,添加初始数据,finish,
+
+
+1.4.菜单的初始化界面,改菜单url,finish,
+2.管理员界面的实现,
+2.1.登录,finish,
+2.1.1.列表页,finish,
+2.2.写查看时跳转,
+	数据的准备,看一看,finish,
+	在点击时,做userId的赋值,finish,
+3.退出的折腾,finish,
+4.首页的数据构思,finish,
+	1.快捷菜单,finish,
+	2.右侧数据，最近收款，付款，finish,
+	2.1.店铺数据,finish,
+	3.我的菜单，finish,
+	4.意见反馈，finish,
+5.首页的开发完善，用上可伸缩的页面组件，finish,
+6.添加标签页的东东，finish,
+7.首页右上角的折腾,finish,
+7.1.相关链接的添加，
+	1.与我联系,在window.onload才会弄上,
+	2.我的桌面,finish,
+	3.我的菜单,finish,
+	4.用户反馈,finish,
+	5.退出，finish,
+8.页面body的左右部分的折腾,finish,
+9.我的菜单弹出后，在主页面添加上标签的开发，finish，
+10.IE下form慢的问题，finish,
+
+9.初始化是否正确的,----------,调通过了，剩下接入的东东，
+9.1.step要能够正确运行,因为step与初始化不相关,因此,可以单独测试,finish,
+9.1.弄清楚流程,进行初始化的流程模拟，
+9.2.测试初始化,查看数据是否正确,
+9.3.IE下底部分页的折腾,为什么出不来?yui grid remove column会报兼容性错误，先不管IE，直接折腾，
+
+收付款单 list 界面上删除的赤字报错信息,即循环删除的解决,finish，
+
+列表页面添加复制按钮,finish,
+选择页面,操作按钮的显示隐藏,finish,
+金额数字的格式化问题,finish,主要是 被格式字段,格式的字段,
+需要找一个go的大数进行计算,用godec即可,试验过可行，finish，
+程序中的长度是utf8 encode后的,因此,会有*3的效应,处理这个东东,finish,
+当数据量大时,过账会有bug,因此,我需要一个新的小 pendingTransaction 来操作,只需要其底下的几个字段修改即可,
+只在pendingTransaction里面存最初的一个obj即可,finish，
+js压缩输出时,添加日期标记，用读取配置文件的方式输出,并写回复报头,finish,
+
+11.金额字段的查询区间的错误，需要用前面补0，后面补空格0，然后相关的空格处理，finish，
+12.日期的替换，用alloy的东东，需要阅读后，复制代码到程序中，finish,先暂时用自己的东东,比较强大了，
+13.列表页输入日期的报错，即其如果不是正确的格式,finish,
+14.列表页查询之前，做基本的校验，finish,
+14.cookie的添加的折腾，finish，
+14.1.showModalDialog的多弹出层的折腾，应该配合上WidgetStack即可，明天再奋战，finish，直接改 zIndex即可，
+15.事务的定期回滚，在程序里面实现定期的奔跑，用time.after，txnManager里面？
+	完成，需要部署脚本跑一下 访问一下，/app/startruntxnperiod
+14.列表，表单页面的美化，top应用图标。上班时间其实也可以弄。
+	列表，finish，
+		1.查询条件，当查询条件较少时，不显示展开，
+			1.1.长度，finish,
+		2.查询条件label，右对齐，finish，
+		3.工具栏，按钮，finish，
+		4.列表栏显示标题，finish，
+		5.表格最大化，finish，
+		6.表格样式，finish，
+		6.1.head,finish，
+		6.2.body,finish，
+		6.3.virtualColumn,button,finish，
+		6.4.修改各个组件模型中的样式，finish，
+		7.字段的提示信息的折腾，finish,
+		8.编辑与复制换个地方,finish,
+		8.IE8下的修改,先不管，全部弄完再说．
+	选择器，finish，
+	弹出，finish，
+	我的菜单，finish，
+	表单，finish,
+	选择列表中的trigger-field中的查看弹窗，改成默认用标签页打开，finish，
+	查看时，某些字段非只读，finish，
+	被用查询为什么没数据，finish，
+	意见反馈的开发？查看页面很难看，finish，
+	首页的金额显示：finish，
+	正式环境下控制台不会报错？finish，简单地控制台输出
+	1.log下接入的url，finish，
+	2.在访问淘宝报错时，log出请求和返回的内容，finish，
+10.80*80的图标，finish，
+15.简单的并发测试，有时间就做，没时间就不做，------------------------------------，
+	开始简单地折腾，用parser_的东东，添加log.Print的东东，
+	测试一下parse,
+10.最后才是接入是否正确，
+
+12.rownumber的东东,当前先不用管,上线后处理,
+13.cookie里面的userId,重新放到服务端实现的方法,当前只设置 cookie host,cookie存活时间,
+
+
+ProviderType
+CurrencyType
+Bank
+MeasureUnit
+CustomerType
+TaxType
+IncomeType
+IncomeItem
+AccountingPeriod
+BillReceiveTypeParameter
+BillPaymentTypeParameter
+SystemParameter
+
+
+db.SysUnit.remove({'A.createUnit': 20})
+db.SysUser.remove({'A.createUnit': 20})
+db.ProviderType.remove({'A.createUnit': 20})
+db.CurrencyType.remove({'A.createUnit': 20})
+db.Bank.remove({'A.createUnit': 20})
+db.MeasureUnit.remove({'A.createUnit': 20})
+db.CustomerType.remove({'A.createUnit': 20})
+db.TaxType.remove({'A.createUnit': 20})
+db.IncomeType.remove({'A.createUnit': 20})
+db.IncomeItem.remove({'A.createUnit': 20})
+db.AccountingPeriod.remove({'A.createUnit': 20})
+db.BillTypeParameter.remove({'A.createUnit': 20})
+db.BillReceiveTypeParameter.remove({'A.createUnit': 20})
+db.BillPaymentTypeParameter.remove({'A.createUnit': 20})
+db.SystemParameter.remove({'A.createUnit': 20})
+db.SysStep.remove({'A.createUnit': 20})
+
+
+FinUnitBillTypeTreeUnitLoader
+FinUnitBillTypeTreeBillTypeLoader
+
+1.在没有revel的情况下跑起来,
+1.2.css,js,img的如何来访问,running,-----------------------,只能看文档了,
+1.2.1.简单的跑起来,public目录的映射,gogogogo,
+1.2.2.可以映射,finish,
+1.2.3.读取配置文件,指向这个目录,
+3.测试一下\,pass,
+4.同时做 [dev],[prod]的相关区别,pass,
+5.开发方式下,自动重新加载配置文件,finish,
+6.加载 dev和prod各自的值,finish,
+
+7.配置文件中从环境中读取变量,finish,
+8.日志文件的开发,从配置中读取配置的东东,级别,日志文件位置等等,running,---------------------
+1.测试一下能否正常地写入,
+2.不同的配置,用不同的写入,接下来,文件的配置的相关问题,
+当配置了文件时,
+1.如果路径不存在,则新建目录,finish,
+3.日志文件采用日期追加格式,先跳过,没找到获取文件创建时间的函数,finish,用日期强行搞定,忽忽忽忽,
+
+
+1.1.普通的访问和渲染html,这个好像有可参考的地方,参考console.Summary方法,
+1.查找一下用到revel的函数有哪些?好像没用到,但是有一些可以去掉了,
+1.1.1.全部弄进来好了,并一个个干掉,running,------------------------,
+1.1.2.看一看自定义的函数能否干掉,用已有的函数替换,
+
+
+1.3.Action的映射,running,-----------------------------,正在参考beegoo的实现,忽忽忽忽,悟了,
+参考13.0单及后面,用reflect的方式实现自动映射,
+我也需要一个自定义的log,
+参考:
+ - 13.2 [自定义路由器设计](13.2.md)
+ - 13.3 [controller设计](13.3.md)
+
+1.3.1.mongoDB的方式,能否用copy tcp的方式实现,
+
+我悟了,用serve即可,用一个全局计数器来实现,
+main.go要有什么东东,然后,哪些应该在框架里面,哪些应该在自己的东东里面,然后各种扩展,
+
+1.3.session要如何来实现,主要都是参考beegoo的相关东东,
+	Go的net/http包中提供了静态文件的服务，`ServeFile`和`FileServer`等函数。beego的静态文件处理就是基于这一层处理的，具体的实现如下所示：
+
+1.4.wrapper function的相关实现,好像只能递归地实现?
+1.5.干掉revel的相关函数的东东,全部用go自带的标签,
+
+2.分离出公用的包,
+
+
+	|——main.go         入口文件
+	|——conf            配置文件和处理模块
+	|——controllers     控制器入口
+	|——models          数据库处理模块
+	|——utils           辅助函数库
+	|——static          静态文件目录
+	|——views           视图库
+
+可以抄一抄session的相关处理,
+
+干掉revel的相关东东,并进行处理,
+1.非revel文件夹,其它的全部干掉,
+2.revel文件夹,
+basedataaction的相关东东,如何来进行替换?
+
+revel.Result,
+
+1.可以跑起来,
+1.1.引入 controllers 的相关东东,
+1.1.1.filter的东东,finish,
+BusinessPanicFilter,放在系统中实现,finish,
+SessionEffectFilter,finish,
+UTF8Filter,finish,
+DateFlagFilter,pass,
+CacheControlFilter,finish,
+
+2.用JS来解析表达式,running,-------------------------------,
+	ExpressionParser_linux.go,有没有用到?如果没有用到,暂干掉好了,有用到,
+		ParseGolang,调用了Parse方法,
+		Parse,里面用http.PostForm的方式,
+	Script.go,有用到,但是基本上不用改,
+	ScriptTest.go,有用到,但是基本上不用改,
+3.先从cookie中读取,userId,再修改成从内存中根据cookie读取,
+4.先能够跑起来,最后才是 global 换成 Context,
+5.才是修改设计,使之可以自适应各种自定义的设计,操,
+
+
+
+
+

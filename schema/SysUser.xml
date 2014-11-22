@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list-template xmlns="http://www.papersns.com/template" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.papersns.com/template http://www.papersns.com/template ">
+
+	<id>SysUser</id>
+	<selector-id>SysUserSelector</selector-id>
+
+	<adapter name="" />
+	<description>员工外出申请</description>
+	<scripts>/hr/archives/empsalarycheck/empsalarychecklist.js</scripts>
+	<view-template view="component/template.ui.ftl" />
+
+	<toolbar export="true">
+		<button text="新增" mode="fn" handler="doSave" iconCls="test">
+			<expression>test_expression</expression>
+			<button-attribute name="code" value="C" />
+			<button-attribute name="functionId" value="50010" />
+		</button>
+
+		<button text="删除" mode="url^" handler="/oa/selfapply/egress/getEgress.go?EMPEGRESS_ID={EMPEGRESS_ID}">
+			<button-attribute name="code" value="D" />
+			<button-attribute name="functionId" value="50010" />
+		</button>
+
+		<button text="导出" mode="url" handler="doExport">
+			<button-attribute name="code" value="U" />
+			<button-attribute name="functionId" value="10018" />
+		</button>
+		
+		<button text="获取记录测试" mode="fn" handler="test" iconCls="">
+		</button>
+	</toolbar>
+
+	<security functionId="10018"></security>
+
+	<!-- 
+	<before-build-query>SysUser.beforeBuildQuery</before-build-query>
+	<after-build-query>SysUser.afterBuildQuery</after-build-query>
+	 -->
+	<before-build-query></before-build-query>
+	<after-query-data></after-query-data>
+
+	<data-provider size="10">
+		<collection>SysUser</collection><!-- mongoDB collection name -->
+		<fix-bson-query>{"_id": {"$gte": 15}}</fix-bson-query><!-- mongoDB fix query, json format -->
+		<!-- 
+		<map>
+function() {
+    emit(this._id, {
+        count: 1,
+        nick: this.nick
+    })
+}
+		</map>
+		<reduce>
+function(key, values) {
+    var count = 0;
+    values.forEach(function(item){
+        count += item.count;
+    })
+    return {
+        count: count,
+        nick: values[0].nick
+    }
+}
+		</reduce>
+		 -->
+	</data-provider>
+
+	<!-- <column-model selectionMode="checkbox" rownumber="true" sqlOrderBy="create_time desc"> -->
+	<column-model selectionMode="radio" rownumber="true" bsonOrderBy="_id">
+		<checkbox-column name="checkboxSelect" hideable="false">
+			<!-- 
+			<expression>"31" == str(data.get("AUDIT_STATUS"))</expression>
+			 -->
+			<expression>1 == 1</expression>
+			<!-- python language -->
+		</checkbox-column>
+		<!-- <id-column name="EMPEGRESS_ID" text="编号" hideable="true" /> -->
+		<id-column name="id" text="编号" hideable="true" />
+
+		<virtual-column name="FUN_C" text="操作" width="40">
+			<buttons>
+				<button text="编辑" iconCls="bj_btn" mode="fn" handler="doEdit">
+					<expression>1 == 1</expression>
+					<button-attribute name="code" value="U" />
+				</button>
+				<button text="查看" iconCls="ck_btn" mode="url^" handler="/component/schema.go?@name=DEMO_VIEW&amp;EMPEGRESS_ID={id}" >
+					<expression>1 == 1</expression>
+				</button>
+			</buttons>
+		</virtual-column>
+		<string-column name="nick" text="昵称" />
+		<number-column name="numTest" text="金额" prefix="￥" decimalPlaces="2" decimalSeparator="." thousandsSeparator="," suffix=""></number-column>
+		<!-- 
+		<number-column name="numTest1" text="金额1" currencyField="localCurrency" isMoney="true"></number-column>
+		<number-column name="numTest2" text="金额2" currencyField="currency" isMoney="true"></number-column>
+		 -->
+		<number-column name="currency" text="币别测试" hideable="true"></number-column>
+		
+		<date-column name="dateTest" text="日期" dbPattern="yyyyMMdd" displayPattern="yyyy-MM-dd"></date-column>
+		<date-column name="dateTimeTest" text="日期时间" dbPattern="yyyyMMddHHmmss" displayPattern="yyyy-MM-dd HH:mm"></date-column>
+		
+		<boolean-column name="boolTest" text="是布尔测试" />
+		
+		<dictionary-column name="dictTest" text="字典测试" dictionary="D_DICTTEST"></dictionary-column>
+		
+		<script-column name="scriptTest" text="脚本列测试" script="str(data.get('id') or '') + ',' + str(data.get('boolTest') or '')"/>
+		
+		<string-column name="nestTest" text="嵌套测试">
+			<column-model>
+				<script-column name="nest1" text="嵌套1" script="data.get('nick').encode('utf8')"></script-column>
+				<dictionary-column name="nestDictTest1" text="子字典测试" dictionary="D_DICTTEST"></dictionary-column>
+			</column-model>
+		</string-column>
+
+		<date-column name="APP_TIME" text="申请日期" />
+
+		<string-column name="AUDIT_STATUS" text="审核状态" bson="'{value}'" >
+			<column-attribute name="paraName" value="AUDIT_STATUS"/>
+		</string-column>
+		
+	</column-model>
+
+	<query-parameters>
+		<query-parameter name="nick" text="昵称" editor="textfield" restriction="like" value="昵称"></query-parameter>
+		<query-parameter name="dept_id" text="部门" restriction="eq" editor="numberfield"></query-parameter>
+
+		<query-parameter name="type" text="类型" restriction="in"  editor="combotree">
+		</query-parameter>
+		
+		<query-parameter name="createTimeBegin" columnName="createTime" text="申请日期从" restriction="ge" editor="datefield">
+			<parameter-attribute name="displayPattern" value="yyyy-MM-dd"/>
+ 	 		<parameter-attribute name="dbPattern" value="yyyyMMdd"/>
+		</query-parameter>
+
+		<query-parameter name="createTimeEnd" columnName="createTime" text="申请日期至" restriction="le" editor="datefield">
+			<parameter-attribute name="displayPattern" value="yyyyMMdd"/>
+ 	 		<parameter-attribute name="dbPattern" value="yyyyMMddHHmmss"/>
+		</query-parameter>
+		
+		<query-parameter name="dictTest" text="字典测试" restriction="eq" editor="combo">
+			<parameter-attribute name="dictionary" value="D_DICTTEST" />
+		</query-parameter>
+		<query-parameter name="treeTest" text="树测试" restriction="eq" editor="combo">
+			<parameter-attribute name="tree" value="SYSUSER_TREE" />
+			<parameter-attribute name="observe" value="treeUrlTest" />
+		</query-parameter>
+		<query-parameter name="treeUrlTest" text="树url测试" restriction="eq" editor="combo">
+			<parameter-attribute name="treeUrl" value="SysUserTest" />
+		</query-parameter>
+		<query-parameter name="checkboxTest" text="复选框测试" restriction="in" editor="checkbox">
+			<parameter-attribute name="dictionary" value="D_DICTTEST" />
+		</query-parameter>
+		<query-parameter name="radioTest" text="单选框测试" restriction="in" editor="radio">
+			<parameter-attribute name="dictionary" value="D_DICTTEST" />
+		</query-parameter>
+		
+		<query-parameter name="id" text="主键" restriction="eq" editor="hidden">
+		</query-parameter>
+	</query-parameters>
+</list-template>

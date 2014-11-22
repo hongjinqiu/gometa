@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.papersns.com/fieldpool" xmlns:tns="http://www.papersns.com/fieldpool" elementFormDefault="qualified">
+
+	<annotation>
+		<appinfo></appinfo>
+		<documentation>
+			标题：字段模板池Schema
+			版本：v1.0
+			创建者：SuJianFeng
+			创建时间： 2013-06-27
+			最后更新者：SuJianFeng
+			最后更新时间： 2013-06-27
+		</documentation>
+	</annotation>
+
+	<!-- 字段模板池Schema -->
+	<element name="fields">
+		<complexType>
+			<sequence>
+				<element ref="tns:field" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<!-- 字段模型 -->
+	<element name="field">
+		<complexType>
+			<group ref="tns:field-group"></group>
+			<attribute name="id" />
+			<attribute name="extends" />
+		</complexType>
+	</element>
+
+
+	<group name="field-group">
+		<all>
+			<!-- 数据库字段名 -->
+			<element name="fieldName" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 字段显示名 -->
+			<element name="displayName" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 字段数据库存储类型 -->
+			<element name="fieldDataType" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="STRING" />
+						<enumeration value="SMALLINT" />
+						<enumeration value="INT" />
+						<enumeration value="LONGINT" />
+						<enumeration value="BOOLEAN" />
+						<enumeration value="FLOAT" />
+						<enumeration value="MONEY" />
+						<enumeration value="DECIMAL" />
+						<enumeration value="REMARK" />
+						<enumeration value="BLOB" />
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 字段数值类型 -->
+			<element name="fieldNumberType" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="UNDEFINE" />
+						<enumeration value="MONEY" />
+						<enumeration value="PRICE" />
+						<enumeration value="EXCHANGERATE" />
+						<enumeration value="PERCENT" />
+						<enumeration value="QUANTITY" />
+						<enumeration value="UNITCOST" />
+						<enumeration value="YEAR" />
+						<enumeration value="YEARMONTH" />
+						<enumeration value="DATETIME" />
+						<enumeration value="DATE" />
+						<enumeration value="TIME" />
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 字段长度 -->
+			<element name="fieldLength" default="20" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="int">
+						<minInclusive value="1" />
+						<maxInclusive value="999" />
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 预设值表达式 -->
+			<element name="defaultValueExpr" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<simpleContent>
+						<extension base="string">
+							<attribute name="mode" default="text">
+								<simpleType>
+									<restriction base="string">
+										<enumeration value="text" />
+										<enumeration value="python" />
+										<enumeration value="golang" />
+									</restriction>
+								</simpleType>
+							</attribute>
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+			<!-- 关联字段启用被用检查 -->
+			<element name="checkInUsed" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 是否固定隐藏 -->
+			<element name="fixHide" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否固定只读 -->
+			<element name="fixReadOnly" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否允许 复制 -->
+			<element name="allowCopy" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 是否允许 重复 -->
+			<element name="allowDuplicate" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 被用不可以修改 -->
+			<element name="denyEditInUsed" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否允许为空 -->
+			<element name="allowEmpty" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 字段值限制选项 -->
+			<element name="limitOption" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<!-- 不限制、限制最大值、限制最小值、限制范围 -->
+					<restriction base="string">
+						<enumeration value="unLimit" />
+						<enumeration value="limitMax" />
+						<enumeration value="limitMin" />
+						<enumeration value="limitRange" />
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 最大值 -->
+			<element name="limitMax" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 最小值 -->
+			<element name="limitMin" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 验证表达式 -->
+			<element name="validateExpr" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 验证不通过的提示信息 -->
+			<element name="validateMessage" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 数据字典 -->
+			<element name="dictionary" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 数据字典表达式 -->
+			<element name="dictionaryWhere" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 联动计算表达式 -->
+			<element name="calcValueExpr" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<simpleContent>
+						<extension base="string">
+							<attribute name="mode" default="text">
+								<simpleType>
+									<restriction base="string">
+										<enumeration value="text" />
+										<enumeration value="python" />
+										<enumeration value="golang" />
+									</restriction>
+								</simpleType>
+							</attribute>
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+			<!-- 是否虚拟字段 -->
+			<element name="virtual" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 零值显示空白 -->
+			<element name="zeroShowEmpty" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否本币字段 -->
+			<element name="localCurrencyency" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否纳入清单 -->
+			<element name="fieldInList" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 是否纳入清单条件 -->
+			<element name="listWhereField" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 格式化来源是字段 -->
+			<element name="formatExpr" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 关联模型集合 -->
+			<element name="relationDS" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<sequence>
+						<element name="relationItem" minOccurs="0" maxOccurs="unbounded">
+							<complexType>
+								<sequence>
+									<element name="id" type="string" default="R" />
+									<element name="relationExpr" default="1">
+										<complexType>
+											<simpleContent>
+												<extension base="string">
+													<attribute name="mode" default="text">
+														<simpleType>
+															<restriction base="string">
+																<enumeration value="text" />
+																<enumeration value="python" />
+																<enumeration value="golang" />
+															</restriction>
+														</simpleType>
+													</attribute>
+												</extension>
+											</simpleContent>
+										</complexType>
+									</element>
+									<element name="jsRelationExpr" default="1">
+										<complexType>
+											<simpleContent>
+												<extension base="string">
+													<attribute name="mode" default="text">
+														<simpleType>
+															<restriction base="string">
+																<enumeration value="text" />
+																<enumeration value="js" />
+																<enumeration value="function" />
+																<enumeration value="functionName" />
+															</restriction>
+														</simpleType>
+													</attribute>
+												</extension>
+											</simpleContent>
+										</complexType>
+									</element>
+									<element name="relationModelId" type="string" default="" />
+									<element name="relationDataSetId" type="string" default="" />
+									<element name="displayField" type="string" default="" />
+									<element name="valueField" type="string" default="" />
+								</sequence>
+								<attribute name="name" use="required"></attribute>
+							</complexType>
+						</element>
+					</sequence>
+				</complexType>
+			</element>
+			<!-- 
+			<element name="relationDS" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<element name="relationDS" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<sequence>
+						<element name="relationItem" minOccurs="0" maxOccurs="unbounded">
+							<complexType>
+								<sequence>
+									<element name="id" type="string" default="R" />
+									<element name="relationExpr" type="string" default="1" />
+									<element name="relationModelId" type="string" default="" />
+								</sequence>
+							</complexType>
+						</element>
+					</sequence>
+				</complexType>
+			</element>
+			 -->
+		</all>
+	</group>
+
+</schema>

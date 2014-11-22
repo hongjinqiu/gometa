@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.papersns.com/datasource" xmlns:tns="http://www.papersns.com/datasource" elementFormDefault="qualified">
+	<annotation>
+		<appinfo></appinfo>
+		<documentation>
+			标题：数据源模型Schema
+			版本：v1.0
+			创建者：SuJianFeng
+			创建时间： 2013-05-16
+			最后更新者：SuJianFeng
+			最后更新时间： 2013-05-27
+		</documentation>
+	</annotation>
+	
+	<!-- 数据源模型 -->
+	<element name="datasource">
+		<complexType>
+			<sequence>
+				<element name="id">
+					<simpleType>
+						<restriction base="string">
+							<minLength value="1"></minLength>
+						</restriction>
+					</simpleType>
+				</element>
+				<element name="displayName" type="string" default="数据源名称" />
+				<!-- 子系统代码 -->
+				<element name="systemId">
+					<simpleType>
+						<restriction base="string">
+							<minLength value="1"></minLength>
+						</restriction>
+					</simpleType>
+				</element>
+				<!-- 代码字段 -->
+				<element name="codeFieldName" type="string" default="" />
+				<!-- 业务日期字段 -->
+				<element name="businessDateField" type="string" default="" />
+				<!-- 总账帐簿 -->
+				<element name="accountBookIdField" type="string" default="" />
+				<!-- 数据源类型 -->
+				<element name="modelType">
+					<simpleType>
+						<restriction base="string">
+							<enumeration value="BASE" />
+							<enumeration value="BILL" />
+							<enumeration value="REPORT" />
+							<enumeration value="FUNCTION" />
+							<enumeration value="GROUPPARAM" />
+							<enumeration value="COMPANYPARAM" />
+							<enumeration value="SUBSYSTEMPARAM" />
+							<enumeration value="BILLTYPE" />
+							<enumeration value="BILLTYPEPARAM" />
+							<enumeration value="CURRENCY" />
+							<enumeration value="MEASUREUNIT" />
+						</restriction>
+					</simpleType>
+				</element>
+				<element name="inUsedDenyEdit" type="boolean" default="false" />
+				<!-- Strut的Package命名空间 -->
+				<element name="actionNameSpace" type="string" />
+				<!-- 清单URL -->
+				<element name="listUrl" type="string" default="/component/schema.go?@name=DATASOURCE_MODEL_LIST" />
+				<!-- collectionName -->
+				<element name="collectionName" type="string" default="" />
+				<!-- 单据类型字段id -->
+				<element name="billTypeField" type="string" default="" />
+				<!-- 单据类型参数数据源模型id -->
+				<element name="billTypeParamDataSource" type="string" default="" />
+				<!-- 生效标记字段id -->
+				<element name="hasCheckField" type="string" default="" />
+				<!-- 清单排序规则,用json来表示 -->
+				<element name="listSortFields" type="string" default="" />
+				<!-- 主数据集 -->
+				<element ref="tns:masterData" />
+				<!-- 分录数据集 -->
+				<element ref="tns:detailData" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<!-- 主数据集 -->
+	<element name="masterData">
+		<complexType>
+			<sequence>
+				<element name="id" default="A">
+					<simpleType>
+						<restriction base="string">
+							<pattern value="[A-A]" />
+						</restriction>
+					</simpleType>
+				</element>
+				<element name="displayName" type="string" default="主数据集" />
+				<element name="allowCopy" type="boolean" default="true" />
+				<!-- 主键字段 -->
+				<!-- <element name="primaryKey">
+					<simpleType>
+						<restriction base="string">
+							<enumeration value="PRIMARY_KEY" />
+						</restriction>
+					</simpleType>
+				</element> -->
+				<!-- 固定字段 -->
+				<element name="fixField">
+					<complexType>
+						<sequence>
+							<element name="primaryKey" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="PRIMARY_KEY" />
+								</complexType>
+							</element>
+
+							<element name="createBy" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="CREATE_BY" />
+								</complexType>
+							</element>
+
+							<element name="createTime" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="CREATE_TIME" />
+								</complexType>
+							</element>
+							<element name="createUnit" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="CREATE_UNIT" />
+								</complexType>
+							</element>
+							<element name="modifyBy" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="MODIFY_BY" />
+								</complexType>
+							</element>
+							<element name="modifyUnit" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="MODIFY_UNIT" />
+								</complexType>
+							</element>
+							<element name="modifyTime" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="MODIFY_TIME" />
+								</complexType>
+							</element>
+							<element name="billStatus" minOccurs="0" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="BILL_STATUS" />
+								</complexType>
+							</element>
+							<element name="attachCount" minOccurs="0" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="ATTACH_COUNT" />
+								</complexType>
+							</element>
+							<!-- 
+							<element name="IS_INITBILL" minOccurs="0" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="IS_INITBILL" />
+								</complexType>
+							</element>
+							 -->
+							<element name="remark" minOccurs="0" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="REMARK" />
+								</complexType>
+							</element>
+						</sequence>
+					</complexType>
+				</element>
+				<!-- 业务字段 -->
+				<element name="bizField">
+					<complexType>
+						<sequence>
+							<element ref="tns:field" minOccurs="1" maxOccurs="unbounded" />
+						</sequence>
+					</complexType>
+				</element>
+			</sequence>
+
+		</complexType>
+	</element>
+
+	<!-- 分录数据集 -->
+	<element name="detailData">
+		<complexType>
+			<sequence>
+				<element name="id" default="B">
+					<simpleType>
+						<restriction base="string">
+							<pattern value="[B-Z]" />
+						</restriction>
+					</simpleType>
+				</element>
+				<element name="displayName" type="string" default="分录数据集" />
+				<!-- <element name="parentId" type="string" default="A" /> -->
+				<element name="allowEmpty" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+				<!-- <element name="allowEmptyRow" type="boolean" default="false" /> -->
+				<element name="allowCopy" type="boolean" default="true" />
+				<!-- <element name="readonly" type="boolean" default="false" /> -->
+				<!-- 主键字段 -->
+				<!-- <element name="primaryKey">
+					<simpleType>
+						<restriction base="string">
+							<enumeration value="PRIMARY_KEY" />
+						</restriction>
+					</simpleType>
+				</element> -->
+				<!-- 固定字段 -->
+				<element name="fixField">
+					<complexType>
+						<sequence>
+							<element name="primaryKey" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="PRIMARY_KEY" />
+								</complexType>
+							</element>
+							<!-- 
+							<element name="srcDatasourceId" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="SRC_DATASOURCE_ID" />
+								</complexType>
+							</element>
+							<element name="srcDatasetId" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="SRC_DATASET_ID" />
+								</complexType>
+							</element>
+							<element name="srcBillId" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="SRC_BILL_ID" />
+								</complexType>
+							</element>
+							<element name="srcDetailId" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="SRC_DETAIL_ID" />
+								</complexType>
+							</element>
+							 -->
+
+							<element name="createBy" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="CREATE_BY" />
+								</complexType>
+							</element>
+
+							<element name="createTime" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="CREATE_TIME" />
+								</complexType>
+							</element>
+							<element name="createUnit" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="CREATE_UNIT" />
+								</complexType>
+							</element>
+							<element name="modifyBy" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="MODIFY_BY" />
+								</complexType>
+							</element>
+							<element name="modifyUnit" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="MODIFY_UNIT" />
+								</complexType>
+							</element>
+							<element name="modifyTime" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="MODIFY_TIME" />
+								</complexType>
+							</element>
+							<element name="billStatus" minOccurs="0" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="BILL_STATUS" />
+								</complexType>
+							</element>
+							<element name="attachCount" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="ATTACH_COUNT" />
+								</complexType>
+							</element>
+							<element name="remark" minOccurs="1" maxOccurs="1">
+								<complexType>
+									<group ref="tns:field-group"></group>
+									<attribute name="id" default="id" />
+									<attribute name="extends" default="REMARK" />
+								</complexType>
+							</element>
+						</sequence>
+					</complexType>
+				</element>
+				<!-- 业务字段 -->
+				<element name="bizField">
+					<complexType>
+						<sequence>
+							<element ref="tns:field" minOccurs="1" maxOccurs="unbounded" />
+						</sequence>
+					</complexType>
+				</element>
+			</sequence>
+
+		</complexType>
+	</element>
+
+	<group name="field-group">
+		<all>
+			<!-- 数据库字段名 -->
+			<!-- <element name="fieldName" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element> -->
+			<!-- 字段显示名 -->
+			<element name="displayName" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 字段数据库存储类型 -->
+			<element name="fieldDataType" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="STRING" />
+						<enumeration value="SMALLINT" />
+						<enumeration value="INT" />
+						<enumeration value="LONGINT" />
+						<enumeration value="BOOLEAN" />
+						<enumeration value="FLOAT" />
+						<enumeration value="MONEY" />
+						<enumeration value="DECIMAL" />
+						<enumeration value="REMARK" />
+						<enumeration value="BLOB" />
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 字段数值类型 -->
+			<element name="fieldNumberType" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="UNDEFINE" />
+						<enumeration value="MONEY" />
+						<enumeration value="PRICE" />
+						<enumeration value="EXCHANGERATE" />
+						<enumeration value="PERCENT" />
+						<enumeration value="QUANTITY" />
+						<enumeration value="UNITCOST" />
+						<enumeration value="YEAR" />
+						<enumeration value="YEARMONTH" />
+						<enumeration value="DATE" />
+						<enumeration value="TIME" />
+						<enumeration value="DATETIME" />
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 字段长度 -->
+			<element name="fieldLength" default="20" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="int">
+						<minInclusive value="1" />
+						<maxInclusive value="5000" />
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 预设值表达式 -->
+			<element name="defaultValueExpr" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<simpleContent>
+						<extension base="string">
+							<attribute name="mode" default="text">
+								<simpleType>
+									<restriction base="string">
+										<enumeration value="text" />
+										<enumeration value="python" />
+										<enumeration value="golang" />
+									</restriction>
+								</simpleType>
+							</attribute>
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+			<!-- 关联字段启用被用检查 -->
+			<element name="checkInUsed" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 是否固定隐藏 -->
+			<element name="fixHide" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否固定只读 -->
+			<element name="fixReadOnly" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否允许 复制 -->
+			<element name="allowCopy" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 是否允许 重复 -->
+			<element name="allowDuplicate" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 被用不可以修改 -->
+			<element name="denyEditInUsed" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否允许为空 -->
+			<element name="allowEmpty" type="boolean" default="true" minOccurs="0" maxOccurs="1" />
+			<!-- 字段值限制选项 -->
+			<element name="limitOption" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<!-- 不限制、限制最大值、限制最小值、限制范围 -->
+					<restriction base="string">
+						<enumeration value="unLimit" />
+						<enumeration value="limitMax" />
+						<enumeration value="limitMin" />
+						<enumeration value="limitRange" />
+					</restriction>
+				</simpleType>
+			</element>
+			<!-- 最大值 -->
+			<element name="limitMax" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 最小值 -->
+			<element name="limitMin" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 验证表达式 -->
+			<element name="validateExpr" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 验证不通过的提示信息 -->
+			<element name="validateMessage" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 数据字典 -->
+			<element name="dictionary" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 数据字典表达式 -->
+			<element name="dictionaryWhere" type="string" default="" minOccurs="0" maxOccurs="1" />
+			<!-- 联动计算表达式 -->
+			<element name="calcValueExpr" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<simpleContent>
+						<extension base="string">
+							<attribute name="mode" default="text">
+								<simpleType>
+									<restriction base="string">
+										<enumeration value="text" />
+										<enumeration value="python" />
+										<enumeration value="golang" />
+									</restriction>
+								</simpleType>
+							</attribute>
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+			<!-- 是否虚拟字段 -->
+			<element name="virtual" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 零值显示空白 -->
+			<element name="zeroShowEmpty" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否本币字段 -->
+			<element name="localCurrencyency" type="boolean" default="false" minOccurs="0" maxOccurs="1" />
+			<!-- 是否纳入清单 -->
+			<!-- <element name="fieldInList" type="boolean" default="true" minOccurs="0" maxOccurs="1" /> -->
+			<!-- 是否纳入清单条件 -->
+			<!-- <element name="listWhereField" type="boolean" default="true" minOccurs="0" maxOccurs="1" /> -->
+			<!-- 格式化来源是字段 -->
+			<element name="formatExpr" type="string" default="localCurrency" minOccurs="0" maxOccurs="1" />
+			<!-- 关联模型集合 -->
+			<element name="relationDS" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<sequence>
+						<element name="relationItem" minOccurs="0" maxOccurs="unbounded">
+							<complexType>
+								<sequence>
+									<element name="id" type="string" default="R" />
+									<element name="relationExpr" default="1">
+										<complexType>
+											<simpleContent>
+												<extension base="string">
+													<attribute name="mode" default="text">
+														<simpleType>
+															<restriction base="string">
+																<enumeration value="text" />
+																<enumeration value="python" />
+																<enumeration value="golang" />
+															</restriction>
+														</simpleType>
+													</attribute>
+												</extension>
+											</simpleContent>
+										</complexType>
+									</element>
+									<element name="jsRelationExpr" default="1">
+										<complexType>
+											<simpleContent>
+												<extension base="string">
+													<attribute name="mode" default="text">
+														<simpleType>
+															<restriction base="string">
+																<enumeration value="text" />
+																<enumeration value="js" />
+																<enumeration value="function" />
+																<enumeration value="functionName" />
+															</restriction>
+														</simpleType>
+													</attribute>
+												</extension>
+											</simpleContent>
+										</complexType>
+									</element>
+									<element name="relationModelId" type="string" default="" />
+									<element name="relationDataSetId" type="string" default="" />
+									<element name="displayField" type="string" default="" />
+									<element name="valueField" type="string" default="" />
+								</sequence>
+								<attribute name="name" use="required"></attribute>
+							</complexType>
+						</element>
+					</sequence>
+				</complexType>
+			</element>
+		</all>
+	</group>
+
+	<!-- 字段模型 -->
+	<element name="field">
+		<complexType>
+			<group ref="tns:field-group"></group>
+			<attribute name="id" />
+			<attribute name="extends" />
+		</complexType>
+	</element>
+
+</schema>
+
+
