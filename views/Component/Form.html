@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>layout test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="/app/combo?yui.3.12.0/cssreset/cssreset-min.css&yui.3.12.0/cssfonts/cssfonts-min.css&yui.3.12.0/cssbase/cssbase-min.css&{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/css/global.css?{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/js/gallery-2013.09.18-18-49/build/gallery-layout/assets/gallery-layout-core.css">
+<script type="text/javascript">
+	YUI_config = {
+		debug : true,
+		combine : true,
+		comboBase : '/app/combo?',
+		root : 'yui.3.12.0/',
+		gallery: 'gallery-2013.09.18-18-49'
+	};
+	var formJsConfig = {
+		modules: {
+	        "papersns-form": {
+	            fullpath: '/app/FormJS',
+	            requires: ['node', 'widget-base', 'widget-htmlparser', 'io-form', 'widget-parent', 'widget-child', 'base-build', 'substitute', 'io-upload-iframe', 'collection']
+	        }
+	    }	
+	};
+</script>
+<script src="/public/js/yui.3.12.0/yui/yui-min.js?{{.flash.dateFlag}}" type="text/javascript"></script>
+<script type="text/javascript">
+	var field;
+	YUI(formJsConfig).use("node", "event", "papersns-form", function(Y) {
+		Y.on("domready", function(e) {
+			/* 
+			var myForm = new Y.Form({
+			    method : "post",
+			    action : "/test.php?action=submit",
+			    inlineValidation : true,
+			    children : [
+			        {name : 'input1', type : 'text', label : 'Email Input: ', validator : 'email'},
+			        {name : 'input2', type : 'text', label : 'Phone Number Input: ', validator : 'phone'},
+			        {name : 'choiceinput', type : 'ChoiceField', label : 'Radio Choices: ', choices : [
+			            {label : 'Choice A', value : 'A'},
+			            {label : 'Choice B', value : 'B'},
+			            {label : 'Choice C', value : 'C'}
+			        ]},
+			        {type : 'SubmitButton', value : 'Submit'},
+			        {type : 'ResetButton', value : 'Reset'}
+			    ]
+			});
+			myForm.render('#formContainer');
+			myForm.add({name : 'choiceinput', type : 'ChoiceField', label : 'Radio Choices: ', choices : [
+		           {label : 'Choice A', value : 'A'},
+		          {label : 'Choice B', value : 'B'},
+		          {label : 'Choice C', value : 'C'}
+		      ]});
+			 */
+			 /*
+			//gallery-form
+			field = new Y.TextField({name : 'input1', type : 'text', required: true, validator : 'email'});
+			field.render("#test2");
+			field.get("error");// string
+			//field.set('error', Y.PFormField.INVALID_IP_MESSAGE);
+			field.validateField();// true or false
+			var textElem = Y.one("#testText");
+			textElem.on("mouseover", function(Y){
+				textElem.addClass("x-form-invalid-field");
+			});
+			textElem.on("mouseout", function(Y){
+				textElem.removeClass("x-form-invalid-field");
+			});
+			*/
+			// papersns-form
+			var field = new Y.PTextField({name : 'input1', type : 'text', required: true, validateInline: true, validator : function(value, formFieldObj){
+				if (value != "abc") {
+					formFieldObj.set("error", "值必须为abc");
+					return false;
+				}
+				return true;
+			}});
+			field.render("#test3");
+			field.validateField();
+		});
+	});
+</script>
+
+</head>
+<body class="yui3-skin-sam">
+	<div id="test2">test2</div>
+	<input type="text" id="testText" value="text" class="x-form-text?{{.flash.dateFlag}}" />
+	<div id="test3">test3</div>
+</body>
+</html>

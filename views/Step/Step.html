@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>{{.result.listTemplate.Description}}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript">
+	YUI_config = {
+		debug : true,
+		combine : true,
+		comboBase : '/app/combo?',
+		root : 'yui.3.12.0/',
+		gallery: 'gallery-2013.09.18-18-49'
+	};
+</script>
+<link rel="stylesheet" type="text/css" href="/app/combo?yui.3.12.0/cssreset/cssreset-min.css&yui.3.12.0/cssfonts/cssfonts-min.css&yui.3.12.0/cssbase/cssbase-min.css&{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/css/global.css?{{.flash.dateFlag}}" />
+<script src="/app/combo?yui.3.12.0/yui/yui-min.js&{{.flash.dateFlag}}" type="text/javascript"></script>
+<script type="text/javascript" src="/app/comboview?js/moduleConfig.js&js/common.js&{{.flash.dateFlag}}"></script>
+<script type="text/javascript">
+	function show(id) {
+		document.getElementById(id).style.display = "";
+	}
+	function hide(id) {
+		document.getElementById(id).style.display = "none";
+	}
+	function unMarkCurrent() {
+		var stepContent = document.getElementById("stepContent");
+		pLi = stepContent.getElementsByTagName("p");
+		for (var i = 0; i < pLi.length; i++) {
+			if (pLi[i].className.indexOf("current") > -1) {
+				pLi[i].className = pLi[i].className.replace("current", "");
+			}
+		}
+	}
+	var intervalId;
+	function step() {
+		ajaxRequest({
+			url: "/app/step/?date=" + new Date()
+			,params: {
+			},
+			moduleName: "step-module",
+			callback: function(data) {
+				if (data.maxId < data.currentId) {
+					unMarkCurrent();
+					show("stepInitFinish");
+					clearInterval(intervalId);
+					setInterval(autoJump, 1000);
+				} else {
+					var current = document.getElementById("step" + data.currentId);
+					if (current) {
+						unMarkCurrent();
+						current.className += " current";
+					}
+				}
+			}
+		});
+	}
+	function autoJump() {
+		var num = document.getElementById("autoJump").innerHTML;
+		if (num <= "0") {
+			location.href = "/";
+		} else {
+			document.getElementById("autoJump").innerHTML = (parseInt(num) - 1).toString();
+		}
+	}
+</script>
+</head>
+
+<body class="yui3-skin-sam">
+<div class="stepContent" id="stepContent">
+	<p class="stepInit">系统初始化中</p>
+	{{range $index, $item := .result.stepLi}}
+		<p id="step{{$item.A.type}}" class="step {{if eq $index 0}}current{{end}}">{{inc $index 1}}.{{$item.A.name}}</p>
+	{{end}}
+	<p id="stepInitFinish" class="stepInitFinish" style="display: none">系统初始化完成，自动跳转中(<span id="autoJump">5</span>)。你也可以点击<a href="/">这里</a>进入系统。</p>
+</div>
+<script type="text/javascript">
+	YUI(g_financeModule).use("step-module", function(Y) {
+		intervalId = setInterval(step, 1000);
+	});
+</script>
+</body>
+</html>

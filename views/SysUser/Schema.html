@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>layout test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript">
+	YUI_config = {
+		debug : true,
+		combine : true,
+		comboBase : '/app/combo?',
+		root : 'yui.3.12.0/',
+		gallery: 'gallery-2013.09.18-18-49'
+	};
+</script>
+<link rel="stylesheet" type="text/css" href="/app/combo?yui.3.12.0/cssreset/cssreset-min.css&yui.3.12.0/cssfonts/cssfonts-min.css&yui.3.12.0/cssbase/cssbase-min.css&{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/css/global.css?{{.flash.dateFlag}}" />
+<style type="text/css">
+body {
+	font-size: 12px;
+}
+#pagContC {
+    font-size:  12px;
+    vertical-align: middle;
+    padding:    4px 0;
+}
+
+#pagContC img.pgControls {
+    width:  auto;
+    height: 12px;
+    padding: 0 4px 0 4px;
+    border: none;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+#pagContC img.yui3-pagview-disabled {
+    cursor: default;
+}
+#pagContC .yui3-pagview-input-page {
+	width: 30px;
+}
+</style>
+<script src="/public/js/yui.3.12.0/yui/yui-min.js?{{.flash.dateFlag}}" type="text/javascript"></script>
+<script type="text/javascript">
+	
+</script>
+</head>
+
+<body class="yui3-skin-sam">
+	<!-- 工具栏 -->
+	{{range $index, $item := .result.formTemplate.FormElemLi}}
+		{{if eq $item.XMLName.Local "html"}}
+			{{$item.Html.Value}}
+		{{end}}
+		{{if eq $item.XMLName.Local "toolbar"}}
+		<div>
+			{{range $subIndex, $subItem := $item.Toolbar.ButtonLi}}
+				<input type="button" value="{{$subItem.Text}}" />
+			{{end}}
+		</div>
+		{{end}}
+		{{if eq $item.XMLName.Local "column-model"}}
+			<table>
+				{{range $subIndex, $subItem := $item.ColumnModel.ColumnLi}}
+				<tr>
+					<td>{{$subItem.Name}}</td>
+				</tr>
+				{{end}}
+			</table>
+		{{end}}
+	{{end}}
+	<!-- 主数据集 -->
+	<!-- 分录 -->
+</body>
+</html>

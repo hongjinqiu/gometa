@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"sync"
 	"time"
+	"strings"
 )
 
 const (
@@ -90,12 +91,36 @@ func GetFromSession(w http.ResponseWriter, r *http.Request, name string) string 
 		if err != http.ErrNoCookie {
 			panic(err)
 		} else {
-			return ""
+			// get cookie from response,
+			cookieStr := w.Header().Get("Set-Cookie")
+			cookieDict := getCookieDictFromStr(cookieStr)
+			sessionId := cookieDict[sessionName]
+			return sessionDict[sessionId][name]
+//			return ""
 		}
 	} else {
 		sessionId := cookie.Value
 		return sessionDict[sessionId][name]
 	}
+}
+
+/**
+cookieStr的格式:
+gometasessionid=67f663ae6d07dc255fdc650897140353; Path=/; Expires=Sun, 28 Dec 2014 08:15:14 UTC; Max-Age=14400
+*/
+func getCookieDictFromStr(cookieStr string) map[string]string {
+	result := map[string]string{}
+	li := strings.Split(cookieStr, ";")
+	for _, item := range li {
+		item = strings.TrimSpace(item)
+		itemLi := strings.Split(item, "=")
+		if len(itemLi) == 1 {
+			result[itemLi[0]] = ""
+		} else if len(itemLi) > 1 {
+			result[itemLi[0]] = itemLi[1]
+		}
+	}
+	return result
 }
 
 func SetToSession(w http.ResponseWriter, r *http.Request, name string, value string) {

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>{{.result.listTemplate.Description}}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript">
+	YUI_config = {
+		debug : true,
+		combine : true,
+		comboBase : '/app/combo?',
+		root : 'yui.3.12.0/',
+		gallery: 'gallery-2013.09.18-18-49'
+	};
+</script>
+<link rel="stylesheet" type="text/css" href="/app/combo?yui.3.12.0/cssreset/cssreset-min.css&yui.3.12.0/cssfonts/cssfonts-min.css&yui.3.12.0/cssbase/cssbase-min.css&{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/css/global.css?{{.flash.dateFlag}}" />
+<script src="/app/combo?yui.3.12.0/yui/yui-min.js&{{.flash.dateFlag}}" type="text/javascript"></script>
+<!-- 
+<script type="text/javascript" src="/app/comboview?js/moduleConfig.js&js/common.js&js/dataTableExtend.js&js/columnManager.js&js/queryParameter.js&js/relationManager.js&js/listTemplateFactory.js&js/listTemplateService.js&Component/listTemplate.js&{{.result.listTemplate.Scripts}}&{{.flash.dateFlag}}"></script>
+ -->
+<script type="text/javascript" src="/app/comboview?js/moduleConfig.js&js/common.js&js/dataTableExtend.js&js/columnManager.js&js/queryParameter.js&js/relationManager.js&js/listTemplateFactory.js&js/listTemplateService.js&Component/listTemplate.js&{{.result.listTemplate.Scripts}}&{{.flash.dateFlag}}"></script>
+<script type="text/javascript">
+	var g_yuiCommondLi = [];
+
+	DataTableManager.prototype.doAfterResponse = function(e) {
+		g_yuiCommondLi.push(function(Y) {
+			var data = Y.JSON.parse(e.data.responseText);
+			if (data.relationBo) {
+				g_relationManager.mergeRelationBo(data.relationBo);
+			}
+			if (data.usedCheckBo) {
+				g_usedCheck = data.usedCheckBo;
+			}
+		});
+	}
+
+	var g_dataBo = {{.result.dataBoJson}};
+	var listTemplate = {{.result.listTemplateJson}};
+	var DATA_PROVIDER_SIZE = {{.result.pageSize}} || 10;
+	var g_gridPanelDict = {};
+	// 系统参数
+	var sysParam = {
+		localCurrency: {
+			prefix: "￥",
+			decimalPlaces: 3,// 金额小数位数
+			unitPriceDecimalPlaces: 4// 单价小数位数
+		},
+		unitCostDecimalPlaces: 5,// 单位成本小数位数
+		percentDecimalPlaces: 1,// 百分比小数位数
+		thousandsSeparator: ","
+	};
+	if (listTemplate) {
+		var listTemplateFactory = new ListTemplateFactory();
+		if (typeof(listTemplateExtraInfo) != "undefined") {
+			listTemplateFactory.extendListTemplate(listTemplate, listTemplateExtraInfo);
+		}
+	}
+	{{if .result.layerBoJson}}
+	var g_layerBo = {{.result.layerBoJson}};
+	{{else}}
+	var g_layerBo = null;
+	{{end}}
+	{{if .result.layerBoLiJson}}
+	var g_layerBoLi = {{.result.layerBoLiJson}};
+	{{else}}
+	var g_layerBoLi = null;
+	{{end}}
+	{{if .result.usedCheckJson}}
+	var g_usedCheck = {{.result.usedCheckJson}};
+	{{else}}
+	var g_usedCheck = {};
+	{{end}}
+	{{if .result.relationBoJson}}
+	var g_relationBo = {{.result.relationBoJson}};
+	{{else}}
+	var g_relationBo = {};
+	{{end}}
+	{{if .result.defaultBoJson}}
+	var g_defaultBo = {{.result.defaultBoJson}};
+	{{else}}
+	var g_defaultBo = null;
+	{{end}}
+	{{if .result.formDataJson}}
+	var g_formDataJson = {{.result.formDataJson}};
+	{{else}}
+	var g_formDataJson = null;
+	{{end}}
+	var g_relationManager = new RelationManager();
+	var g_masterFormFieldDict = {};
+	var g_Y = null;
+</script>
+<!-- 
+<script type="text/javascript" src="/app/comboview?js/moduleConfig.js&js/common.js&js/dataTableExtend.js&js/columnManager.js&js/queryParameter.js&js/listTemplateFactory.js&js/listTemplateService.js&Component/listTemplate.js&{{.result.listTemplate.Scripts}}&{{.flash.dateFlag}}"></script>
+ -->
+</head>
+
+<body class="yui3-skin-sam yui3-skin-finance">
+<div style="display: none;">
+{{.result.listTemplate.Scripts}}
+</div>
+	<div class="content">
+		{{template "Console/ListQueryParameter.html" .}}
+		<div class="formToolbar">
+			<input type="button" value="返回" class="but_box" onclick="location.href='/console/listschema?@name=BbsPost'"/>
+			<input type="button" value="回复" class="but_box" onclick="showReply()"/>
+		</div>
+		<div class="panel-header">
+			<div class="panel-title">意见反馈列表</div>
+		</div>
+		<table border="0" width="100%" class="form-main-table form-main tableVAlignTop bbs-main">
+			<tr>
+				<td width="15%" class="searchTitle bbs-content-hd">用户</td>
+				<td class="bbs-content-hd">内容</td>
+			</tr>
+			<tbody id="datalist">
+			{{range $index, $item := .result.dataBo.items}}
+			<tr>
+				<td class="searchTitle">
+					<span id="userDisplay_{{$index}}"></span>
+					<script type="text/javascript">
+						document.getElementById("userDisplay_{{$index}}").innerHTML = getUserDisplay({{$item.createBy}});
+					</script>
+				</td>
+				<td>
+					{{if eq $index 0 }}
+						<div>标题：{{$item.title}}</div>
+					{{end}}
+					<div>
+						创建时间：{{$item.createTimeDisplay}}
+						<br /><br />
+						内容：{{$item.content}}
+					</div>
+				</td>
+			</tr>
+			{{end}}
+			</tbody>
+		</table>
+		<div class="formToolbar">
+			<input type="button" value="返回" class="but_box" onclick="location.href='/console/listschema?@name=BbsPost'"/>
+			<input type="button" value="回复" class="but_box" onclick="showReply()"/>
+		</div>
+		<div id="replyDiv" style="display: none;">
+			<input type="hidden" id="type" name="type" value="2" />
+			<textarea id="content" name="content" class="table-layout-textarea textarea_box"></textarea>
+			<br />
+			<input type="button" value="保存" class="but_box" onclick="reply()"/>
+		</div>
+	</div>
+	
+	<div style="display: none">
+		<img src="/public/galleryimages/loading_indicator.gif?{{.DATE_FLAG}}" title="加载中..." border="0" width="16" height="16"/>
+	</div>
+	<script type="text/javascript">
+	YUI(g_financeModule).use("finance-module", function(Y) {
+		g_Y = Y;
+		for (var i = 0; i < g_yuiCommondLi.length; i++) {
+			g_yuiCommondLi[i](Y);
+		}
+		if (typeof(listMain) !== "undefined") {
+//			listMain(Y);
+		}
+		if (typeof(main) !== "undefined") {
+			main(Y);
+		}
+	});
+	</script>
+</body>
+</html>

@@ -46,6 +46,8 @@ func RegisteStaticFilePath() {
 		if os.PathSeparator != '/' {
 			urlStaticPathPart = strings.Replace(urlStaticPathPart, "/", string(os.PathSeparator), -1)
 		}
+		// 删除外部设置的header,让go自己侦测content-type
+		delete(w.Header(), "Content-Type")
 		file := filepath.Join(config.String("gmeta.static"), urlStaticPathPart)
 		http.ServeFile(w, r, file)
 	})
@@ -67,15 +69,17 @@ func RegisteReflectController(constrollersDict []reflect.Type) {
 
 			for _, structName := range structNameLi {
 				for _, methodName := range methodNameLi {
-					HandleFunc("/"+structName+"/"+methodName+"/", func(reflectType reflect.Type, index int) func(http.ResponseWriter, *http.Request) {
-						return func(w http.ResponseWriter, r *http.Request) {
-							inst := reflect.New(reflectType).Elem().Interface()
-							instValue := reflect.ValueOf(inst)
-							method := instValue.Method(index)
-							in := []reflect.Value{reflect.ValueOf(w), reflect.ValueOf(r)}
-							method.Call(in)
-						}
-					}(item, i))
+					for _, subfix := range []string{"", "/"} {
+						HandleFunc("/"+structName+"/"+methodName+subfix, func(reflectType reflect.Type, index int) func(http.ResponseWriter, *http.Request) {
+							return func(w http.ResponseWriter, r *http.Request) {
+								inst := reflect.New(reflectType).Elem().Interface()
+								instValue := reflect.ValueOf(inst)
+								method := instValue.Method(index)
+								in := []reflect.Value{reflect.ValueOf(w), reflect.ValueOf(r)}
+								method.Call(in)
+							}
+						}(item, i))
+					}
 				}
 			}
 

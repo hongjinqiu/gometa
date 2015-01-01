@@ -1,0 +1,119 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+<header class="hero-unit" style="background-color:#A9F16C">
+  <div class="container">
+    <div class="row">
+      <div class="hero-text">
+        <h1>It works!{{.greeting}}</h1>
+        <p></p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+	店铺：{{.result.unit.A.name}}<br />
+	登录用户：{{.result.user.A.id}},{{.result.user.A.nick}}
+	[<a href="/console/listschema?@name=BbsPost&cookie=false" target="_blank">意见反馈</a>]<br />
+	<a href="#">我的桌面</a><br />
+	<a href="javascript:void(0)" onclick="showModalDialog({'title': '我的菜单', 'url':'/app/menulist', 'moduleName': 'index-module'})">我的菜单</a><br />
+	<a href="/app/logout">退出</a><br />
+</div>
+
+{{range $index, $line := .result.menuLi}}
+<div>
+	<table border="0">
+		<tr>
+			{{range $subIndex, $item := $line}}
+			<td>
+				<img src="/public/img/index/{{$item.image}}" />
+			</td>
+			{{end}}
+		</tr>
+	</table>
+</div>
+{{end}}
+
+<table border="0">
+	<tr>
+		<td>操作</td>
+		<td>单据日期</td>
+		<td>单据编号</td>
+		<td>收款账户</td>
+		<td>收款对象</td>
+		<td>收款金额</td>
+	</tr>
+	{{range $subIndex, $item := .result.gatheringBillLi}}
+	<tr>
+		<td>
+			<a href="/console/formschema/?@name=GatheringBill&id={{$item.id}}&formStatus=view" target="_blank">查看</a>
+		</td>
+		<td>
+			{{$item.billDate}}
+		</td>
+		<td>
+			{{$item.billNo}}
+		</td>
+		<td>
+			{{$item.account}}
+		</td>
+		<td>
+			{{$item.chamberlain}}
+		</td>
+		<td>
+			{{$item.amtGathering}}
+		</td>
+	</tr>
+	{{end}}
+</table>
+
+<table border="0">
+	<tr>
+		<td>操作</td>
+		<td>单据日期</td>
+		<td>单据编号</td>
+		<td>付款账户</td>
+		<td>付款对象</td>
+		<td>付款金额</td>
+	</tr>
+	{{range $subIndex, $item := .result.payBillLi}}
+	<tr>
+		<td>
+			<a href="/console/formschema/?@name=PayBill&id={{$item.id}}&formStatus=view" target="_blank">查看</a>
+		</td>
+		<td>
+			{{$item.billDate}}
+		</td>
+		<td>
+			{{$item.billNo}}
+		</td>
+		<td>
+			{{$item.account}}
+		</td>
+		<td>
+			{{$item.payer}}
+		</td>
+		<td>
+			{{$item.amtPay}}
+		</td>
+	</tr>
+	{{end}}
+</table>
+
+<div class="container">
+  <div class="row">
+    <div class="span6">
+      {{template "flash.html" .}}
+    </div>
+  </div>
+</div>
+
+<div>
+<form action="/app/hello" method="GET">
+    <input type="text" name="myName" /><br/>
+    <input type="submit" value="Say hello!" />
+</form>
+</div>
+
+{{template "footer.html" .}}

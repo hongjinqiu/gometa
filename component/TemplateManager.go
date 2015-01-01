@@ -74,7 +74,7 @@ func (o TemplateManager) GetListTemplate(id string) ListTemplate {
 }
 
 func (o TemplateManager) GetListTemplateInfo(id string) ListTemplateInfo {
-	if config.String("mode.dev") == "true" {
+	if config.String("debug") == "true" {
 		listTemplateInfo, found := o.findListTemplateInfo(id)
 		if found {
 			listTemplateInfo, err := o.loadSingleListTemplateWithLock(listTemplateInfo.Path)
@@ -214,7 +214,7 @@ func (o TemplateManager) GetSelectorTemplate(id string) ListTemplate {
 }
 
 func (o TemplateManager) GetSelectorTemplateInfo(id string) SelectorTemplateInfo {
-	if config.String("mode.dev") == "true" {
+	if config.String("debug") == "true" {
 		selectorTemplateInfo, found := o.findSelectorTemplateInfo(id)
 		if found {
 			selectorTemplateInfo, err := o.loadSingleSelectorTemplateWithLock(selectorTemplateInfo.Path)
@@ -388,7 +388,7 @@ func (o TemplateManager) GetFormTemplate(id string) FormTemplate {
 }
 
 func (o TemplateManager) GetFormTemplateInfo(id string) FormTemplateInfo {
-	if config.String("mode.dev") == "true" {
+	if config.String("debug") == "true" {
 		formTemplateInfo, found := o.findFormTemplateInfo(id)
 		if found {
 			formTemplateInfo, err := o.loadSingleFormTemplateWithLock(formTemplateInfo.Path)
@@ -439,22 +439,25 @@ func (o TemplateManager) loadFormTemplate() {
 	templaterwlock.Lock()
 	defer templaterwlock.Unlock()
 
-	path := config.String("FORM_TEMPLATE_PATH")
-	if path != "" {
-		filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if strings.Index(path, "form_") > -1 && strings.Index(path, ".xml") > -1 && !info.IsDir() {
-				_, err = o.loadSingleFormTemplate(path)
+	formTemplatePath := config.String("FORM_TEMPLATE_PATH")
+	pathLi := strings.Split(formTemplatePath, ":")
+	for _, path := range pathLi {
+		if path != "" {
+			filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 				if err != nil {
 					return err
 				}
-			}
-
-			return nil
-		})
+	
+				if strings.Index(path, "form_") > -1 && strings.Index(path, ".xml") > -1 && !info.IsDir() {
+					_, err = o.loadSingleFormTemplate(path)
+					if err != nil {
+						return err
+					}
+				}
+	
+				return nil
+			})
+		}
 	}
 }
 

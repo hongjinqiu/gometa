@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>收付款记账</title>
+<link rel="shortcut icon" type="image/png" href="/public/img/favicon.png?{{.DATE_FLAG}}">
+<link rel="stylesheet" type="text/css" href="/app/combo?yui.3.12.0/cssreset/cssreset-min.css&yui.3.12.0/cssfonts/cssfonts-min.css&yui.3.12.0/cssbase/cssbase-min.css&{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/app/combo?yui.3.12.0/widget-base/assets/skins/sam/widget-base.css&yui.3.12.0/cssbutton/cssbutton-min.css&yui.3.12.0/widget-modality/assets/skins/sam/widget-modality.css&yui.3.12.0/widget-stack/assets/skins/sam/widget-stack.css&yui.3.12.0/panel/assets/skins/sam/panel.css&{{.flash.dateFlag}}" />
+
+<link rel="stylesheet" type="text/css" href="/app/combo?gallery-2013.09.18-18-49/build/gallery-layout/assets/skins/sam/gallery-layout.css&{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/css/global.css?{{.flash.dateFlag}}" />
+<script type="text/javascript">
+	YUI_config = {
+		debug : true,
+		combine : true,
+		comboBase : '/app/combo?',
+		root : 'yui.3.12.0/',
+		gallery: 'gallery-2013.09.18-18-49'
+	};
+	var g_Y = null;
+</script>
+<script src="/app/combo?yui.3.12.0/yui/yui-min.js&{{.flash.dateFlag}}" type="text/javascript"></script>
+<script type="text/javascript" src="/app/comboview?js/moduleConfig.js&js/common.js&js/index.js&{{.flash.dateFlag}}"></script>
+<script type="text/javascript" src="/app/combo?yui.3.12.0/yui/yui-min.js&{{.flash.dateFlag}}" type="http://localhost:9000/app/comboview?js/financeModule.js"></script>
+<script type="text/javascript" src="/app/combo?yui.3.12.0/oop/oop-min.js&yui.3.12.0/event-custom-base/event-custom-base-min.js&yui.3.12.0/dom-core/dom-core-min.js&yui.3.12.0/dom-base/dom-base-min.js&yui.3.12.0/selector-native/selector-native-min.js&yui.3.12.0/selector/selector-min.js&yui.3.12.0/node-core/node-core-min.js&yui.3.12.0/node-base/node-base-min.js&yui.3.12.0/event-base/event-base-min.js&yui.3.12.0/event-delegate/event-delegate-min.js&yui.3.12.0/node-event-delegate/node-event-delegate-min.js&yui.3.12.0/pluginhost-base/pluginhost-base-min.js&yui.3.12.0/pluginhost-config/pluginhost-config-min.js&yui.3.12.0/node-pluginhost/node-pluginhost-min.js&yui.3.12.0/color-base/color-base-min.js&yui.3.12.0/dom-style/dom-style-min.js&yui.3.12.0/dom-screen/dom-screen-min.js&yui.3.12.0/node-screen/node-screen-min.js&yui.3.12.0/node-style/node-style-min.js&yui.3.12.0/attribute-core/attribute-core-min.js&yui.3.12.0/event-custom-complex/event-custom-complex-min.js&yui.3.12.0/attribute-observable/attribute-observable-min.js&{{.flash.dateFlag}}"></script>
+<script type="text/javascript" src="/app/combo?yui.3.12.0/attribute-extras/attribute-extras-min.js&yui.3.12.0/attribute-base/attribute-base-min.js&yui.3.12.0/attribute-complex/attribute-complex-min.js&yui.3.12.0/base-core/base-core-min.js&yui.3.12.0/base-observable/base-observable-min.js&yui.3.12.0/base-base/base-base-min.js&yui.3.12.0/base-pluginhost/base-pluginhost-min.js&yui.3.12.0/classnamemanager/classnamemanager-min.js&yui.3.12.0/event-synthetic/event-synthetic-min.js&yui.3.12.0/event-focus/event-focus-min.js&yui.3.12.0/widget-base/widget-base-min.js&yui.3.12.0/arraylist/arraylist-min.js&yui.3.12.0/base-build/base-build-min.js&yui.3.12.0/widget-htmlparser/widget-htmlparser-min.js&yui.3.12.0/widget-skin/widget-skin-min.js&yui.3.12.0/widget-uievents/widget-uievents-min.js&yui.3.12.0/widget-parent/widget-parent-min.js&yui.3.12.0/widget-child/widget-child-min.js&yui.3.12.0/event-mousewheel/event-mousewheel-min.js&yui.3.12.0/event-mouseenter/event-mouseenter-min.js&yui.3.12.0/event-key/event-key-min.js&{{.flash.dateFlag}}"></script>
+<script type="text/javascript" src="/app/combo?yui.3.12.0/event-resize/event-resize-min.js&yui.3.12.0/event-hover/event-hover-min.js&yui.3.12.0/event-outside/event-outside-min.js&yui.3.12.0/event-touch/event-touch-min.js&yui.3.12.0/event-move/event-move-min.js&yui.3.12.0/event-flick/event-flick-min.js&yui.3.12.0/event-valuechange/event-valuechange-min.js&yui.3.12.0/event-tap/event-tap-min.js&yui.3.12.0/widget-autohide/widget-autohide-min.js&yui.3.12.0/button-core/button-core-min.js&yui.3.12.0/button-plugin/button-plugin-min.js&yui.3.12.0/widget-stdmod/widget-stdmod-min.js&yui.3.12.0/widget-buttons/widget-buttons-min.js&yui.3.12.0/widget-modality/widget-modality-min.js&yui.3.12.0/widget-position/widget-position-min.js&yui.3.12.0/widget-position-align/widget-position-align-min.js&yui.3.12.0/widget-position-constrain/widget-position-constrain-min.js&yui.3.12.0/widget-stack/widget-stack-min.js&yui.3.12.0/panel/panel-min.js&yui.3.12.0/yui-throttle/yui-throttle-min.js&yui.3.12.0/dd-ddm-base/dd-ddm-base-min.js&yui.3.12.0/dd-drag/dd-drag-min.js&{{.flash.dateFlag}}"></script>
+<script type="text/javascript" src="/app/combo?yui.3.12.0/dd-plugin/dd-plugin-min.js&gallery-2013.09.18-18-49/build/gallery-layout/gallery-layout-min.js&gallery-2013.09.18-18-49/build/gallery-layout-cols/gallery-layout-cols.js&gallery-2013.09.18-18-49/build/gallery-layout-rows/gallery-layout-rows.js&{{.flash.dateFlag}}"></script>
+<script type="text/javascript" src="/app/comboview?js/financeModule.js&{{.flash.dateFlag}}"></script>
+<script type="text/javascript" src="/app/combo?gallery-2013.09.18-18-49/build/gallery-funcprog/gallery-funcprog-min.js&gallery-2013.09.18-18-49/build/gallery-node-optimizations/gallery-node-optimizations-min.js&gallery-2013.09.18-18-49/build/gallery-dimensions/gallery-dimensions-min.js&gallery-2013.09.18-18-49/build/gallery-nodelist-extras2/gallery-nodelist-extras2-min.js&{{.flash.dateFlag}}"></script>
+<script type="text/javascript" src="/app/combo?yui.3.12.0/array-extras/array-extras-min.js&gallery-2013.09.18-18-49/build/gallery-object-extras/gallery-object-extras-min.js&gallery-2013.09.18-18-49/build/gallery-nodelist-extras/gallery-nodelist-extras-min.js&{{.flash.dateFlag}}"></script>
+</head>
+<body class="yui3-skin-sam yui3-skin-finance">
+<div class="layout-hd">
+	<div class="headBody">
+		<div class="top_left">
+			<a class="logo" href=""></a>
+		</div>
+		<div class="top_right">
+	      <p>欢迎你:{{.result.unit.A.name}}
+					  -  
+			{{.result.user.A.nick}}
+			<!-- [
+			<a id="feedback" onclick="feedback()">用户反馈</a>
+			] 
+			[<span id="wangwangConnectMe"></span>]
+			-->
+		  </p>
+	      <ul class="top_ul">
+	        <li><a onclick="selectTab('tab1')" href="javascript:void(0);">我的桌面</a></li>
+	        <li><a onclick="showModalDialog({'title': '我的菜单', 'url':'/app/menulist', 'moduleName': 'index-module'})" href="javascript:void(0);">我的菜单</a></li>
+	        <li><a onclick="putTabIfAbsent('使用说明', '/app/instructions')" href="javascript:void(0);">使用说明</a></li>
+	        <li><a onclick="putTabIfAbsent('意见反馈', '/console/listschema?@name=BbsPost&cookie=false')" href="javascript:void(0);">意见反馈</a></li>
+	        <li><a href="/app/logout">退出</a></li>
+	      </ul>
+	    </div>
+	</div>
+	<div class="headBottom"></div>
+</div>
+<div class="layout-bd FORCE_FIT overflowHidden"><!-- 必须有FORCE_FIT 这个属性,不然只有一个module时,不会扩展到整个界面上 -->
+	<div class="layout-module-row">
+		<div class="layout-module">
+			<div class="layout-m-hd tabs-header">
+				<ul id="tabsWrapper" class="tabs">
+					<li id="tab1" class="tabs-selected">
+						<a class="tabs-inner" href="javascript:void(0)" onclick="selectTab('tab1')">
+							<span class="tabs-title">我的桌面</span>
+							<span class="tabs-icon"></span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div id="tabsChildWrapper" class="layout-m-bd" style="border: 0px"><!-- 必须有,没的话会报错,  solid black -->
+				<div id="tab1Child" class="tabChild">
+					<div style="height: 60px;"></div>
+					<div id="indexContent">
+						<div class="con_left">
+							<div class="con_left">
+								<div class="left_main">
+									{{range $index, $line := .result.menuLi}}
+										{{range $subIndex, $item := $line}}
+											<div class="tb1">
+												<a onclick="putTabIfAbsent('{{$item.name}}','{{$item.url}}')">
+													<p class="p1a">
+														<img src="/public/img/index/{{$item.image}}" name="images">
+														<br />{{$item.name}}
+													</p>
+												</a>
+											</div>
+										{{end}}
+									{{end}}
+								</div>
+							</div>
+						</div>
+						<div class="con_right">
+							<div class="con_tab">
+								<ul class="mm_box2">
+									<li>
+										收款单
+									</li>
+						        </ul>
+						        <div class="con_tab_con">
+						        	<table width="100%" cellspacing="0" cellpadding="0" border="0" id="tracklist" class="index_table2 table_layout">
+							          <thead>
+							            <tr>
+							              	<td width="5%">操作</td>
+							                <td width="15%">单据日期</td>
+							                <td width="15%">单据编号</td>
+							                <td width="15%">收款账户</td>
+							                <td width="10%">收款对象</td>
+							                <td width="10%">收款金额</td>
+							            </tr>
+							            </thead>
+							          <tbody>
+							          	{{range $subIndex, $item := .result.gatheringBillLi}}
+							          	<tr>
+          									<td><a title="查看" class="img_look" onclick="putTabIfAbsent('收款单', '/console/formschema/?@name=GatheringBill&id={{$item.id}}&formStatus=view')" href="javascript:void(0)"></a></td>
+          									<td title="{{$item.billDate}}">{{$item.billDate}}</td>
+          									<td title="{{$item.billNo}}">{{$item.billNo}}</td>
+          									<td title="{{$item.account}}">{{$item.account}}</td>
+          									<td title="{{$item.chamberlain}}">{{$item.chamberlain}}</td>
+          									<td title="{{$item.amtGathering}}">{{$item.amtGathering}}</td>
+          								</tr>
+          								{{end}}
+          								<tr class="bnone">
+          									<td colspan="6">
+          										<span class="fr">
+          											<a onclick="putTabIfAbsent('收款单', '/console/listschema?@name=GatheringBill&cookie=false')" href="javascript:void(0);">[更多]</a>
+          										</span>
+          									</td>
+          								</tr>
+										</tbody>
+          							</table>
+						        </div>
+							</div>
+							<div class="con_tab pos">
+								<ul class="mm_box2">
+									<li>
+										付款单
+									</li>
+						        </ul>
+						        <div class="con_tab_con">
+						        	<table width="100%" cellspacing="0" cellpadding="0" border="0" id="tracklist" class="index_table2 table_layout">
+							          <thead>
+							            <tr>
+							              	<td width="5%">操作</td>
+							                <td width="15%">单据日期</td>
+							                <td width="15%">单据编号</td>
+							                <td width="15%">付款账户</td>
+							                <td width="10%">付款对象</td>
+							                <td width="10%">付款金额</td>
+							            </tr>
+							            </thead>
+							          <tbody>
+							          	{{range $subIndex, $item := .result.payBillLi}}
+							          	<tr>
+          									<td><a title="查看" class="img_look" onclick="putTabIfAbsent('付款单', '/console/formschema/?@name=PayBill&id={{$item.id}}&formStatus=view')" href="javascript:void(0)"></a></td>
+          									<td title="{{$item.billDate}}">{{$item.billDate}}</td>
+          									<td title="{{$item.billNo}}">{{$item.billNo}}</td>
+          									<td title="{{$item.account}}">{{$item.account}}</td>
+          									<td title="{{$item.payer}}">{{$item.payer}}</td>
+          									<td title="{{$item.amtPay}}">{{$item.amtPay}}</td>
+          								</tr>
+          								{{end}}
+          								<tr class="bnone">
+          									<td colspan="6">
+          										<span class="fr">
+          											<a onclick="putTabIfAbsent('付款单', '/console/listschema?@name=PayBill&cookie=false')" href="javascript:void(0);">[更多]</a>
+          										</span>
+          									</td>
+          								</tr>
+										</tbody>
+          							</table>
+						        </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 
+<div class="layout-ft">
+footer
+</div>
+ -->
+
+<script type="text/javascript" id="yui_3_10_2_1_1377439100880_30">
+YUI(g_financeModule).use('index-module', function(Y) {
+"use strict";
+	g_Y = Y;
+	var page_layout = new Y.PageLayout();
+	TAB_DICT_REVERSE["我的桌面"] = "tab1";
+});
+
+// 与我联系图标
+var oldLoadFunc = window.onload;
+window.onload = function() {
+    var elem = document.getElementById("wangwangConnectMe");
+    if (elem) {
+    	//QQ,不可用//elem.innerHTML = '<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2::52" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>';
+        //旺旺//elem.innerHTML = '<a target="_blank" href="http://amos1.taobao.com/msg.ww?v=2&uid=hjq20021984&s=1" ><img border="0" src="http://amos1.taobao.com/online.ww?v=2&uid=hjq20021984&s=1" alt="点击这里给我发消息" /></a>';
+    }
+    if (oldLoadFunc)
+        oldLoadFunc();
+}
+</script>
+
+</body>
+</html>

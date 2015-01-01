@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>layout test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="/public/js/yui.3.12.0/cssreset/cssreset-min.css?{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/js/yui.3.12.0/cssfonts/cssfonts-min.css?{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/js/yui.3.12.0/cssbase/cssbase-min.css?{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/js/gallery-2013.09.18-18-49/build/gallery-layout/assets/gallery-layout-core.css">
+<script type="text/javascript">
+	YUI_config = {
+		debug : true,
+		combine : true,
+		comboBase : '/app/combo?',
+		root : 'yui.3.12.0/',
+		gallery: 'gallery-2013.09.18-18-49'
+	};
+</script>
+<script src="/public/js/yui.3.12.0/yui/yui-min.js?{{.flash.dateFlag}}" type="text/javascript"></script>
+<script type="text/javascript">
+	YUI().use("node", "event", function(Y) {
+		Y.on("domready", function(e) {
+			YUI().use('gallery-layout', function(Y) {
+			  // instantiate the component -- automatically scans the DOM
+			  var layout = new Y.PageLayout();
+			  //layout.set('mode', Y.PageLayout.FIT_TO_VIEWPORT);
+			  // rescan the DOM after adding/removing modules or switching between row-based and column-based layouts
+			  //layout.rescanBody();
+			});
+		});
+	});
+</script>
+
+</head>
+<body>
+	<div class="layout-hd" style="height: 50px; overflow: auto">
+		head
+		<h1>Page Header</h1>
+		<h1>Page Header</h1>
+	</div>
+	<!-- visibility:hidden will be removed once the layout has been calculated -->
+	<div class="layout-bd" style="visibility:hidden;border: 1px solid red;">
+		<div class="layout-module-col">
+			<div class="layout-module">
+				<div class="layout-m-hd" style="border: 1px solid blue">
+					<p>I am a module body that scrolls if needed</p>
+					<!-- <p>
+						<button class="layout-vert-collapse-nub">&uarr;</button>
+						<button class="layout-vert-expand-nub">&darr;</button>
+						I am a fixed module header
+					</p> -->
+				</div>
+				<div class="layout-m-bd" style="border: 1px solid blue">
+					<p>I am a module body that scrolls if needed</p>
+					<div>测试</div>
+				</div>
+			</div>
+			<div class="layout-module">
+				<div class="layout-m-hd" style="border: 1px solid blue">
+					<p>I am a module body that scrolls if needed</p>
+					<!-- <p>
+						<button class="layout-vert-collapse-nub">&uarr;</button>
+						<button class="layout-vert-expand-nub">&darr;</button>
+						I am a fixed module header
+					</p> -->
+				</div>
+				<div class="layout-m-bd" style="border: 1px solid blue">
+					<p>I am a module body that scrolls if needed</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="layout-ft" style="visibility:hidden;">
+		head
+	</div>
+	<!-- visibility:hidden will be removed once the layout has been calculated -->
+	<!-- <div class="layout-ft" style="visibility:hidden;">
+		<p>Page Footer</p>
+	</div> -->
+</body>
+</html>

@@ -152,6 +152,15 @@ func loadConfig() {
 			} else if config["debug"] == "false" && isDev && isProd { // 应用[prod]部分配置
 				config[key] = value
 			}
+//			if key == "FORM_TEMPLATE_PATH" {
+//				println("^^^^ key is:", key, ", value is:", value)
+//				println("^^^^ form.path is:", config["FORM_TEMPLATE_PATH"])
+//				println("^^^^ debug is:", config["debug"])
+//				println("^^^^ isDev is:", isDev)
+//				println("^^^^ isProd is:", isProd)
+//			} else if isDev && !isProd {
+//				println("^^^^ ---- isDev is:", isDev, ", isProd is:", isProd, ",key is:", key, ", value is:", value)
+//			}
 		}
 		isLoad = true
 	}

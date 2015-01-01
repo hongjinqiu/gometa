@@ -1,0 +1,205 @@
+		{{$queryParameterRenderLen := len .result.queryParameterRenderLi}}
+		<div id="queryParameters" class="queryDiv" {{if eq $queryParameterRenderLen 0}}style="display: none;"{{end}}>
+			<div class="queryTitle">查询条件</div>
+			<form action="/component/listtemplate" method="post" name="queryForm" id="queryForm">
+				{{range $index, $item := .result.hiddenParameterLi}}
+					<div id="q_{{$item.Name}}_render" style="display: none"></div>
+					<script type="text/javascript">
+					g_yuiCommondLi.push(function(Y) {
+						var queryParameterManager = new QueryParameterManager();
+						var field = queryParameterManager.getQueryField(Y, '{{$item.Name}}');
+						field.render("#q_{{$item.Name}}_render");
+						g_masterFormFieldDict['{{$item.Name}}'] = field;
+					});
+					</script>
+				{{end}}
+				<div id="queryContent" class="queryContent">
+					<table id="queryMain" class="queryMain" cellspacing="0" cellpadding="0" border="0">
+						{{range $index, $item := .result.queryParameterRenderLi}}
+							<tr class="queryLine">
+								{{range $tdIndex, $tdItem := $item}}
+									<td class="searchTitle">
+										{{$tdItem.label}}：
+									</td>
+									<td>
+										<div id="q_{{$tdItem.name}}_render"></div>
+										<script type="text/javascript">
+										g_yuiCommondLi.push(function(Y) {
+											var queryParameterManager = new QueryParameterManager();
+											var field = queryParameterManager.getQueryField(Y, '{{$tdItem.name}}');
+											field.render("#q_{{$tdItem.name}}_render");
+											g_masterFormFieldDict['{{$tdItem.name}}'] = field;
+										});
+										</script>
+									</td>
+								{{end}}
+								{{if eq $index 0}}
+									<td>
+										{{if gt $queryParameterRenderLen 1}}
+										<input style="display: inline;" class="btnMore" id="btnMore" value="更多条件" type="button" />
+										<input style="display: none;" id="btnUp" class="btnUp" value="收回" type="button" />
+										{{end}}
+										<input type="button" value="查询" id="queryBtn" class="queryBtn" />
+										<input type="button" value="重置" id="queryReset" class="queryReset" />
+									</td>
+								{{else}}
+									<td>&nbsp;</td>
+								{{end}}
+							</tr>
+						{{end}}
+					</table>
+					<!-- 
+					<table class="queryMain" cellspacing="0" cellpadding="0" border="0">
+					{{$parameterLen := len .result.showParameterLi}}
+					{{range $index, $queryParameter := .result.showParameterLi}}
+						{{if residue $index 2 0}}
+						<tr>
+						{{end}}
+						<td class="searchTitle">
+							{{$queryParameter.Text}}
+						</td>
+						<td>
+							{{if eq $queryParameter.Editor "textfield"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+							{{if eq $queryParameter.Editor "textarea"}}
+							<textarea id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}">{{$queryParameter.Value}}</textarea>
+							{{end}}
+							{{if eq $queryParameter.Editor "numberfield"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+							{{if eq $queryParameter.Editor "datefield"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+							{{if eq $queryParameter.Editor "combo"}}
+								<select name="{{$queryParameter.Name}}" id="{{$queryParameter.Name}}">
+									<option value="">请选择</option>
+									{{range $dictionaryIndex, $dictionaryItem := $queryParameter.Dictionary.items}}
+									<option value="{{$dictionaryItem.code}}">{{$dictionaryItem.name}}</option>
+									{{end}}
+									
+									{{range $treeIndex, $treeItem := $queryParameter.Tree.items}}
+									<option value="{{$treeItem.code}}">{{$treeItem.name}}</option>
+									{{end}}
+								</select>
+								{{if $queryParameter.Value}}
+								<script type="text/javascript">
+									document.getElementById("{{$queryParameter.Name}}").value = "{{$queryParameter.Value}}";
+								</script>
+								{{end}}
+							{{end}}
+							{{if eq $queryParameter.Editor "combotree"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+							{{if eq $queryParameter.Editor "displayfield"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+							{{if eq $queryParameter.Editor "hidden"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+							{{if eq $queryParameter.Editor "htmleditor"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+							{{if eq $queryParameter.Editor "checkbox"}}
+								{{range $dictionaryIndex, $dictionaryItem := $queryParameter.Dictionary.items}}
+								<input class="inputWidth" type="checkbox" id="{{$queryParameter.Name}}_{{$dictionaryIndex}}" name="{{$queryParameter.Name}}" value="{{$dictionaryItem.code}}" />
+								<label for="{{$queryParameter.Name}}_{{$dictionaryIndex}}">{{$dictionaryItem.name}}</label>
+								{{end}}
+								
+								{{range $treeIndex, $treeItem := $queryParameter.Tree.items}}
+								<input class="inputWidth" type="checkbox" id="{{$queryParameter.Name}}_{{$treeIndex}}" name="{{$queryParameter.Name}}" value="{{$treeItem.code}}" />
+								<label for="{{$queryParameter.Name}}_{{$treeIndex}}">{{$treeItem.name}}</label>
+								{{end}}
+								{{if $queryParameter.Value}}
+								<script type="text/javascript">
+									function initCheckbox() {
+										var valueLi = "{{$queryParameter.Value}}".split(",");
+										var elemLi = document.getElementsByTagName("input");
+										for (var i = 0; i < elemLi.length; i++) {
+											if (elemLi[i].id.indexOf("{{$queryParameter.Name}}_") > -1) {
+												if (elemLi[i].value in valueLi) {
+													elemLi[i].checked = true;
+												}
+											}
+										}
+									}
+									initCheckbox();
+								</script>
+								{{end}}
+							{{end}}
+							{{if eq $queryParameter.Editor "checkboxgroup"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+							{{if eq $queryParameter.Editor "radio"}}
+								<input class="inputWidth" type="radio" id="{{$queryParameter.Name}}_A0" name="{{$queryParameter.Name}}" value="" />
+								<label for="{{$queryParameter.Name}}_A0">全部</label>
+								{{range $dictionaryIndex, $dictionaryItem := $queryParameter.Dictionary.items}}
+								<input class="inputWidth" type="radio" id="{{$queryParameter.Name}}_{{$dictionaryIndex}}" name="{{$queryParameter.Name}}" value="{{$dictionaryItem.code}}" />
+								<label for="{{$queryParameter.Name}}_{{$dictionaryIndex}}">{{$dictionaryItem.name}}</label>
+								{{end}}
+								
+								{{range $treeIndex, $treeItem := $queryParameter.Tree.items}}
+								<input class="inputWidth" type="radio" id="{{$queryParameter.Name}}_{{$treeIndex}}" name="{{$queryParameter.Name}}" value="{{$treeItem.code}}" />
+								<label for="{{$queryParameter.Name}}_{{$treeIndex}}">{{$treeItem.name}}</label>
+								{{end}}
+								{{if $queryParameter.Value}}
+								<script type="text/javascript">
+									function initRadio() {
+										var value = "{{$queryParameter.Value}}";
+										var elemLi = document.getElementsByTagName("input");
+										for (var i = 0; i < elemLi.length; i++) {
+											if (elemLi[i].id.indexOf("{{$queryParameter.Name}}_") > -1) {
+												if (elemLi[i].value == value) {
+													elemLi[i].checked = true;
+												}
+											}
+										}
+									}
+									initRadio();
+								</script>
+								{{end}}
+							{{end}}
+							{{if eq $queryParameter.Editor "radiogroup"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+							{{if eq $queryParameter.Editor "trigger"}}
+							<input class="inputWidth" type="text" id="{{$queryParameter.Name}}" name="{{$queryParameter.Name}}" value="{{$queryParameter.Value}}" />
+							{{end}}
+						</td>
+						{{if le $parameterLen 2}}
+							{{if last $parameterLen $index}}
+								<td>
+									<input style="display: inline;" class="btnMore" id="btnMore" value="更多条件" type="button" />
+									<input style="display: none;" id="btnUp" class="btnUp" value="收回" type="button" />
+								</td>
+								<td>
+									<input type="button" value="查询" id="queryBtn" class="queryBtn" />
+									<input type="button" value="重置" class="queryReset" />
+								</td>
+								</tr>
+							{{end}}
+						{{else}}
+							{{if residue $index 2 1}}
+								{{if eq $index 1}}
+								<td>
+									<input style="display: inline;" class="btnMore" id="btnMore" value="更多条件" type="button" />
+									<input style="display: none;" id="btnUp" class="btnUp" value="收回" type="button" />
+								</td>
+								<td>
+									<input type="button" value="查询" id="queryBtn" class="queryBtn" />
+									<input type="button" value="重置" class="queryReset" />
+								</td>
+								{{end}}
+								</tr>
+							{{else}}
+								{{if last $parameterLen $index}}
+								</tr>
+								{{end}}
+							{{end}}
+						{{end}}
+					{{end}}
+					</table>
+					 -->
+				</div>
+			</form>
+		</div>

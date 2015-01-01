@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>使用说明</title>
+<link rel="stylesheet" type="text/css" href="/app/combo?yui.3.12.0/cssreset/cssreset-min.css&yui.3.12.0/cssfonts/cssfonts-min.css&yui.3.12.0/cssbase/cssbase-min.css&{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/css/global.css?{{.flash.dateFlag}}" />
+<script type="text/javascript">
+	function hideAll() {
+		var li = document.getElementById("childWrapper").getElementsByTagName("div");
+		var childLi = [];
+		for (var i = 0; i < li.length; i++) {
+			if (li[i].id.indexOf("Child") > -1) {
+				childLi.push(li[i]);
+			}
+		}
+		for (var i = 0; i < childLi.length; i++) {
+			childLi[i].style.display = "none";
+		}
+	}
+	function showById(id) {
+		hideAll();
+		document.getElementById(id).style.display = "";
+	}
+</script>
+</head>
+<body class="yui3-skin-sam">
+<table border="0" class="instructionTable">
+	<tr>
+		<td width="150" valign="top" class="instructionTable-left">
+			<a href="javascript:void(0)" onclick="showById('001Child')">1.系统说明</a><br />
+			<a href="javascript:void(0)" onclick="showById('002Child')">2.首页</a><br />
+			<a href="javascript:void(0)" onclick="showById('003Child')">3.基础资料</a><br />
+			<a href="javascript:void(0)" onclick="showById('004Child')">4.单据类型参数</a><br />
+			<a href="javascript:void(0)" onclick="showById('005Child')">5.系统参数</a><br />
+			<a href="javascript:void(0)" onclick="showById('006Child')">6.初始化</a><br />
+			<a href="javascript:void(0)" onclick="showById('007Child')">7.单据</a><br />
+			<a href="javascript:void(0)" onclick="showById('008Child')">8.报表</a><br />
+		</td>
+		<td valign="top" id="childWrapper">
+			<div id="001Child" class="instructionTable-childContent">
+				<div class="panel-header">
+					<div class="panel-title">系统说明</div>
+				</div>
+				<p>
+					1.系统说明<br />
+					<span class="instructionTable-childContent-content"></span>收付款管理提供了提款单，付款单的录入功能，可以满足商家线下收付款的日常记账需要。
+					系统同时提供了资金汇总的功能，商家可以查看各个会计期的收付情况。基本使用步骤如下：<br />
+					<span class="bold">第一步：录入现金账户/银行账户资料，菜单路径：我的菜单->基础资料->现金账户</span><br />
+					<img src="/public/img/systemintro/step1.jpg?{{.flash.dateFlag}}" width="1000" height="210" title="现金账户/银行账户资料"/><br />
+					<span class="bold">第二步：现金账户/银行账户初始化，菜单路径：我的菜单->初始化->现金账户初始化:</span><br /><br />
+					<img src="/public/img/systemintro/step2.jpg?{{.flash.dateFlag}}" width="1000" height="150" title="现金账户/银行账户资料"/><br />
+					<span class="bold">第三步：录入收款单/付款单，菜单路径：我的菜单->单据->收款单:</span><br /><br />
+					<img src="/public/img/systemintro/step3.jpg?{{.flash.dateFlag}}" width="1000" height="547" title="现金账户/银行账户资料"/><br />
+					<span class="bold">第四步：查看资金汇总表，菜单路径：我的菜单->报表->资金汇总表:</span><br /><br />
+					<img src="/public/img/systemintro/step4.jpg?{{.flash.dateFlag}}" width="1000" height="219" title="现金账户/银行账户资料"/><br />
+				</p>
+			</div>
+			<div id="002Child" class="instructionTable-childContent" style="display: none">
+				<div class="panel-header">
+					<div class="panel-title">首页</div>
+				</div>
+				<p>
+					1.首页<br />
+					<span class="instructionTable-childContent-content"></span>首页展示了快捷菜单和最近10条收付款单。<br />
+					<span class="instructionTable-childContent-content"></span>右上角是菜单按钮。页面左侧展示快捷菜单，页面右侧显示收款单(最近10条)，付款单(最近10条)。
+				</p>
+			</div>
+			<div id="003Child" class="instructionTable-childContent" style="display: none">
+				<div class="panel-header">
+					<div class="panel-title">基础资料</div>
+				</div>
+				<p>
+					1.系统用户<br />
+					<span class="instructionTable-childContent-content"></span>系统用户记录了从淘宝同步过来的用户信息，当用户登录系统时，会在系统用户下面新增一笔记录。
+				</p>
+				<p>
+					2.项目类别<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删，作为"项目"中类别字段的来源。
+				</p>
+				<p>
+					3.项目<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删，作为"单据"中项目字段的来源。
+				</p>
+				<p>
+					4.供应商类别<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删，作为"供应商"中类别字段的来源。
+				</p>
+				<p>
+					5.供应商<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删，作为"单据"中项目字段的来源。
+				</p>
+				<p>
+					6.币别<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，第一次登录系统时，系统会自动新增一笔人民币记录。您暂时不能新增其它的币别。<br />
+					<span class="instructionTable-childContent-content"></span>您可以设置舍入方式，金额小数位数等属性，币别会影响全系统的金额显示格式。
+				</p>
+				<p>
+					7.银行资料<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，第一次登录系统时，系统会自动新增工商银行等常见的银行资料，您可以再自己新增编辑相应的信息。
+				</p>
+				<p>
+					8.计量单位<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删。
+				</p>
+				<p>
+					9.客户类别<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删，作为"客户"中类别字段的来源。
+				</p>
+				<p>
+					10.客户<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删，作为"单据"中客户字段的来源。
+				</p>
+				<p>
+					11.税率类别<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删。
+				</p>
+				<p>
+					12.结算方式<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删。
+				</p>
+				<p>
+					13.收入费用类别<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删。
+				</p>
+				<p>
+					14.收入费用项目<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删。
+				</p>
+				<p>
+					15.现金账户<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删，现金账户初始化，或者新增单据时，会过账现金账户的当前余额字段。
+				</p>
+				<p>
+					16.银行账户<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删，银行账户初始化，或者新增单据时，会过账银行账户的明细对应的币别当前余额字段。
+				</p>
+				<p>
+					17.会计期<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，拥有增删改查功能，被用不可删，第一次进入系统时，系统会建好最近2年的会计期，新增单据时，单据日期必须要落在会计期范围内。
+				</p>
+			</div>
+			<div id="004Child" style="display: none" class="instructionTable-childContent">
+				<div class="panel-header">
+					<div class="panel-title">单据类型参数</div>
+				</div>
+				<p>
+					1.单据类型参数<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，第一次登录系统时，系统会自动新增收款单和付款单的单据类型参数，商家只能编辑，不能新增。<br />
+					<span class="instructionTable-childContent-content"></span>预设业务属性字段会作为单据新增时的默认值。
+				</p>
+			</div>
+			<div id="005Child" style="display: none" class="instructionTable-childContent">
+				<div class="panel-header">
+					<div class="panel-title">系统参数</div>
+				</div>
+				<p>
+					1.系统参数<br />
+					<span class="instructionTable-childContent-content"></span>普通的基础资料，第一次登录系统时，系统会自动新增系统参数，商家只能编辑，不能新增。
+				</p>
+			</div>
+			<div id="006Child" style="display: none" class="instructionTable-childContent">
+				<div class="panel-header">
+					<div class="panel-title">初始化</div>
+				</div>
+				<p>
+					1.现金账户初始化<br />
+					<span class="instructionTable-childContent-content"></span>现金账户初始化可以设置您新增的现金账户的期初金额。
+				</p>
+				<p>
+					2.银行账户初始化<br />
+					<span class="instructionTable-childContent-content"></span>银行账户初始化可以设置您新增的银行账户对应币别的期初金额。
+				</p>
+			</div>
+			<div id="007Child" style="display: none" class="instructionTable-childContent">
+				<div class="panel-header">
+					<div class="panel-title">单据</div>
+				</div>
+				<p>
+					1.收款单<br />
+					<span class="instructionTable-childContent-content"></span>商家可以通过收款单录入日常收款数据，收款单带"收款费用信息"明细分录。收款金额，费用信息将分别过账现金账户或银行账户。<br />
+					<span class="instructionTable-childContent-content"></span>除了增删改查外，您还可以作废，反作废单据。
+				</p>
+				<p>
+					2.付款单<br />
+					<span class="instructionTable-childContent-content"></span>商家可以通过付款单录入日常付款数据，付款单带"付款费用信息"明细分录。付款金额，费用信息将分别过账现金账户或银行账户。<br />
+					<span class="instructionTable-childContent-content"></span>除了增删改查外，您还可以作废，反作废单据。
+				</p>
+			</div>
+			<div id="008Child" style="display: none" class="instructionTable-childContent">
+				<div class="panel-header">
+					<div class="panel-title">报表</div>
+				</div>
+				<p>
+					1.资金汇总表<br />
+					<span class="instructionTable-childContent-content"></span>资金汇总表可以显示现金账户或银行账户某一段时间内的期初，增加，减少，期末金额。商家可以点击操作栏的查看按钮，查看每一笔收付款明细。
+				</p>
+			</div>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

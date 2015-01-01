@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>layout test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="/app/combo?yui.3.12.0/cssreset/cssreset-min.css&yui.3.12.0/cssfonts/cssfonts-min.css&yui.3.12.0/cssbase/cssbase-min.css&{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/css/global.css?{{.flash.dateFlag}}" />
+<link rel="stylesheet" type="text/css" href="/public/js/gallery-2013.09.18-18-49/build/gallery-layout/assets/gallery-layout-core.css">
+<script type="text/javascript">
+	YUI_config = {
+		debug : true,
+		combine : true,
+		comboBase : '/app/combo?',
+		root : 'yui.3.12.0/',
+		gallery: 'gallery-2013.09.18-18-49'
+	};
+</script>
+<script src="/public/js/yui.3.12.0/yui/yui-min.js?{{.flash.dateFlag}}" type="text/javascript"></script>
+<script type="text/javascript">
+</script>
+
+</head>
+<body class="yui3-skin-sam">
+	<div id="demo" style="visibility: hidden;">
+	    <ul>
+	        <li><a href="#foo">foo</a></li>
+	        <li><a href="#bar">bar</a></li>
+	        <li><a href="#baz">baz</a></li>
+	    </ul>
+	    <div>
+	        <div id="foo">
+	            <p>foo content</p>
+	        </div>
+	        <div id="bar">
+	            <p>bar content</p>
+	        </div>
+	        <div id="baz">
+	            <p>baz content</p>
+	        </div>
+	    </div>
+	</div>
+	<script type="text/javascript">
+	YUI().use('tabview', function(Y) {
+	    var tabview = new Y.TabView({srcNode:'#demo'});
+	    tabview.render();
+	    Y.one("#demo").setStyle("visibility", "visible");
+	});
+	</script>
+</body>
+</html>

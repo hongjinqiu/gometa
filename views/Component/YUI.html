@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>YUI 3.6 DT Paginator Combo</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+	<!-- <link href="ba_example.css" rel="stylesheet" type="text/css" />
+    <link href="google-code-prettify/prettify.css" rel="stylesheet" type="text/css" /> -->
+    
+
+    <style type="text/css">
+    /*  CSS for Table A's Paginator View container - A "button" type view  */
+
+        #pagContA .yui3-button {
+             font-size:  13px;
+             height:     28px;
+             width:      auto;
+             color:      black;
+             text-decoration: none;
+             margin-bottom: 10px;
+         }
+
+    /*  CSS for Table B's Paginator View container - a default view, just for spacing */
+
+        #pagContB {
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+    /*  CSS for Table C's Paginator View container - A "bar" type view */
+        #pagContC {
+            font-size:  12px;
+            vertical-align: middle;
+            padding:    4px 0;
+        }
+
+        #pagContC img.pgControls {
+            width:  auto;
+            height: 12px;
+            padding: 0 4px 0 4px;
+            border: none;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+        #pagContC img.yui3-pagview-disabled {
+            cursor: default;
+        }
+    </style>
+    <script src="http://yui.yahooapis.com/3.11.0pr1/build/yui/yui-min.js?{{.flash.dateFlag}}"></script>
+    <script type="text/javascript">
+    YUI({
+        gallery: 'gallery-2013.01.16-21-05'
+    }).use( 'datatable-sort', 'datatable-scroll', 'cssfonts', 'cssbutton',  'dataschema-json',
+            'datatable-datasource', 'datasource-io',  "datasource-jsonschema",
+            'model-sync-rest',  "gallery-datatable-paginator", 'gallery-paginator-view',
+            function(Y) {
+
+            Y.one("body").setStyle("visibility","");
+
+    //============================================================================================
+//        Table C - ModelSync.REST with serverPaginationMap
+    //============================================================================================
+
+
+    //
+    //  Define a custom Model and ModelList for my music data ...
+    //
+        Music = Y.Base.create('recmusic', Y.Model, [],{},{
+            ATTRS:{
+                ma_id:{}, ma_mbid:{}, ma_artist:{}, ma_album:{}, ma_year:{}, ma_label:{}
+            }
+        });
+
+        // In the ModelList class extension, mixin the ModelSync.REST component to handle
+        // all server communications.
+        // Also;
+        //    (1) Override the "url" property with my custom server querystring ... including replacement tokens
+        //    (2) Define an attribute "dsSchema" which represents a schema representation to be parsed via DataSchema.
+        //    (3) Override the .parse method, to parse my server's response and store the pagination state on success
+        //
+        MusicList = Y.Base.create('musiclist', Y.ModelList,[Y.ModelSync.REST],{
+
+            // url setup to handle extra passed-in options for pagination stuff ...
+            url: '/data/musicPage?currentPage={page}&pageRecords={numPageRecords}&sortBy={sortBy}',
+
+            parseJSON: function(resp){
+                var parsed   = Y.JSON.parse(resp),
+                    results  = [],
+                    metaflds = {};
+
+                if ( parsed.replyCode === 200 && parsed.Results ) {
+                    metaflds.indexStart = parsed.indexStart;
+                    metaflds.pageRecs   = parsed.pageRecords;
+                    metaflds.totalRecords   = parsed.totalRecords;
+                    results = parsed.Results
+                }
+
+                return {resp:resp, parsed:parsed, results:results, meta:metaflds};
+            },
+
+            parseDataSchema: function(resp){
+                var parsed = Y.DataSchema.JSON.apply( this.get('dsSchema'), resp);
+                return {resp:resp, parsed:parsed, results:parsed.results, meta:parsed.meta};
+            },
+
+
+            parse: function(resp) {
+                var parsedObj = {};
+
+                if ( this.get('dsSchema') )
+                    parsedObj = this.parseDataSchema(resp);
+                else
+                    parsedObj = this.parseJSON(resp);
+
+            // Define my own event to fire after parsing completes .... in case I want to listen to it somewhere
+                this.fire('response',  parsedObj) ;//{resp:resp, parsed:parsed, meta:metadata, results:results});
+
+                return parsedObj.results || [] ;
+
+            }
+
+        },{
+            ATTRS:{
+
+                // Define a schema as an attribute so we can parse the response using DataSchemaJSON ...
+                dsSchema:   {}
+            }
+        });
+
+
+    //
+    //  Instantiate a new ModelList and define some columns for our DataTable
+    //
+        var myMusic = new MusicList({
+            model:      Music,
+
+            dsSchema:   {
+                resultListLocator: 'Results',
+                resultFields: [ 'ma_id', 'ma_mbid', 'ma_artist', 'ma_album', 'ma_year', 'ma_label' ],
+                metaFields: {
+                    indexStart:   'indexStart',
+                    pageRecs:     'pageRecords',
+                    totalRecords: 'totalRecords'
+                }
+            }
+        });
+
+
+        var colsC = [
+            { key: "ma_artist", label: "Artist" },
+            { key: "ma_album",  label: "Release" },
+            { key: "ma_year",   label: "Release Year", className:'align-center' },
+            { key: "ma_label",  label: "Label" }
+        ];
+
+    //
+    //  Setup a DataTable
+    //
+       var dtableC = new Y.DataTable({
+            columns:    colsC,
+            data:       myMusic,
+            scrollable: 'y',
+            sortable:   true,
+            width:      '880px',
+            height:     '265px',
+            sortBy:     [ { ma_artist:'asc'  }, { ma_year:'desc'} ],
+
+            paginator: new Y.PaginatorView({
+                model:              new Y.PaginatorModel({itemsPerPage:20}),
+                container:          '#pagContC',
+                paginatorTemplate:  '#tmpl-bar',
+                pageOptions:        [ 10, 20, 50 ]
+            }),
+
+        //
+        // "maps" Paginator.Model attributes to server querystring / returned response ...
+        //
+            serverPaginationMap: {
+                totalItems:     'totalRecords',
+                itemsPerPage:   { toServer:'numPageRecords', fromServer:'pageRecords' },
+                itemIndexStart: 'startIndex'
+            },
+
+            paginatorResize: true   // this is now a DT attribute (no longer a PaginatorView attribute)
+
+        }).render('#tableC');
+
+        // Set click handler on button to load the data ....
+        Y.one('#btnLoadC').on('click',function(e){
+            // load page 1 data ...
+            this.processPageRequest(1);
+            e.target.set('disabled',true);
+        }, dtableC);
+
+
+    });
+    </script>
+</head>
+
+<body class="yui3-skin-sam" style="visibility: hidden;">
+<h4>Table A : Local "data" via JS Array:</h4>
+<div id="pagContA"></div>
+<div id="tableA"></div>
+<br/>
+
+<script type="text/x-template" id="tmpl-buttons">
+   <button data-pglink="first" class="yui3-button {pageLinkClass}" title="First Page">First</button>
+   <button data-pglink="prev" class="yui3-button {pageLinkClass}" title="Prior Page">Prev</button>
+   {pageLinks}
+   <button data-pglink="next" class="yui3-button {pageLinkClass}" title="Next Page">Next</button>
+   <button data-pglink="last" class="yui3-button {pageLinkClass}" title="Last Page">Last</button>
+</script>
+
+<hr/>
+
+<h4>Table B : Remote data via DataSource.IO:</h4>
+<div id="pagContB"></div>
+<div id="tableB"></div>
+(A listing of Episodes from a popular US drama TV series ... Breaking Bad)
+<br/><br/>
+
+<hr/>
+
+<h4>Table C : Remote data via ModelSync.REST:</h4>
+<div id="tableC"></div>
+<!--  Define the Paginator Bar HTML -->
+<div id="pagContC" class="yui3-pagview-bar"></div>
+
+<br/>
+The table is initially empty, clicking the "Load" button loads the data and sets up pagination from a RESTful GET request.
+<br/><br/>
+<button id="btnLoadC" class="yui3-button">Load Table C Initial Data</button>
+<br/><br/>
+
+<!--       SCRIPT template content     -->
+<script type="text/x-template" id="tmpl-bar">
+     
+    <img src="/yui/images/glyph/glyphicons_170_step_backward.png?{{.DATE_FLAG}}" class="pgControls {pageLinkClass}" data-pglink="first" title="First Page" border="0" />
+    <img src="/yui/images/glyph/glyphicons_173_backTES.png?{{.DATE_FLAG}}" class="pgControls {pageLinkClass}" data-pglink="prev" title="Prior Page" border="0" />
+    {inputPage} of {totalPages}
+    <img src="/yui/images/glyph/glyphicons_173_play.png?{{.DATE_FLAG}}" class="pgControls {pageLinkClass}" data-pglink="next" title="Next Page" border="0" />
+    <img src="/yui/images/glyph/glyphicons_178_step_forward.png?{{.DATE_FLAG}}" class="pgControls {pageLinkClass}" data-pglink="last" title="Last Page" border="0" />
+    <span style="float:right;margin-right:50px;">Rows per Page: {selectRowsPerPage}</span>
+</script>
+</body>
+
+</html>
