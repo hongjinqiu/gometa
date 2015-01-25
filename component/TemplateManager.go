@@ -13,7 +13,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
-	"labix.org/v2/mgo"
+	"gopkg.in/mgo.v2"
 	"log"
 	"os"
 	"path/filepath"

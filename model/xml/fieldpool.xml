@@ -195,12 +195,6 @@
 		<defaultValueExpr mode="text">1</defaultValueExpr>
 		<dictionary>D_BILL_STATUS</dictionary>
 	</field>
-	<field id="ATTACH_COUNT" extends="ROOT_FIELD">
-		<!-- <fieldName>attachCount</fieldName> -->
-		<displayName>附件数</displayName>
-		<fieldDataType>SMALLINT</fieldDataType>
-		<defaultValueExpr mode="text"></defaultValueExpr>
-	</field>
 
 	<field id="IS_INITBILL" extends="ROOT_FIELD">
 		<!-- <fieldName>isInitBill</fieldName> -->
@@ -289,12 +283,6 @@
 		<fieldDataType>INT</fieldDataType>
 	</field>
 
-	<field id="BILL_ID" extends="ROOT_FIELD">
-		<!-- <fieldName>billId</fieldName> -->
-		<displayName>单据ID</displayName>
-		<fieldDataType>INT</fieldDataType>
-	</field>
-
 	<!-- 基础字段 -->	
 	<field id="STRING_FIELD" extends="ROOT_FIELD">
 		<!-- <fieldName>stringField</fieldName> -->
@@ -326,7 +314,7 @@
 		<allowCopy>false</allowCopy>
 		<allowDuplicate>false</allowDuplicate>
 		<denyEditInUsed>true</denyEditInUsed>
-	</field>	
+	</field>
 	
 	<field id="NAME_FIELD" extends="ROOT_FIELD">
 		<!-- <fieldName>nameField</fieldName> -->
@@ -423,6 +411,6 @@
 		<displayName>年月</displayName>
 		<fieldDataType>INT</fieldDataType>
 		<fieldNumberType>YEARMONTH</fieldNumberType>
-	</field>	
-			
+	</field>
+	
 </fields>

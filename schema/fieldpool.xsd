@@ -20,18 +20,21 @@
 				<element ref="tns:field" minOccurs="0" maxOccurs="unbounded" />
 			</sequence>
 		</complexType>
+		<!-- <unique name="fieldNameUnique">
+			<selector xpath=".//field"></selector>
+			<field xpath="@id"></field>
+		</unique> -->
 	</element>
 
 	<!-- 字段模型 -->
 	<element name="field">
 		<complexType>
 			<group ref="tns:field-group"></group>
-			<attribute name="id" />
+			<attribute name="id" type="ID" />
 			<attribute name="extends" />
 		</complexType>
 	</element>
-
-
+	
 	<group name="field-group">
 		<all>
 			<!-- 数据库字段名 -->
@@ -91,7 +94,7 @@
 				<simpleType>
 					<restriction base="int">
 						<minInclusive value="1" />
-						<maxInclusive value="999" />
+						<maxInclusive value="100000" />
 					</restriction>
 				</simpleType>
 			</element>
@@ -106,6 +109,7 @@
 										<enumeration value="text" />
 										<enumeration value="python" />
 										<enumeration value="golang" />
+										<enumeration value="js" />
 									</restriction>
 								</simpleType>
 							</attribute>
@@ -162,6 +166,7 @@
 										<enumeration value="text" />
 										<enumeration value="python" />
 										<enumeration value="golang" />
+										<enumeration value="js" />
 									</restriction>
 								</simpleType>
 							</attribute>
@@ -199,6 +204,7 @@
 																<enumeration value="text" />
 																<enumeration value="python" />
 																<enumeration value="golang" />
+																<enumeration value="js" />
 															</restriction>
 														</simpleType>
 													</attribute>

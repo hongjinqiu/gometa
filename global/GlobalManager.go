@@ -2,7 +2,7 @@ package global
 
 import (
 	"sync"
-	"labix.org/v2/mgo"
+	"gopkg.in/mgo.v2"
 	"github.com/hongjinqiu/gometa/mongo"
 	. "github.com/hongjinqiu/gometa/mongo"
 )

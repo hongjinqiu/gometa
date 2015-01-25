@@ -2,7 +2,7 @@ package layer
 
 import (
 	"github.com/hongjinqiu/gometa/dictionary"
-	"labix.org/v2/mgo"
+	"gopkg.in/mgo.v2"
 	"github.com/hongjinqiu/gometa/mongo"
 	"github.com/hongjinqiu/gometa/global"
 )

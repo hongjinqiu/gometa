@@ -92,7 +92,6 @@ func (o ModelTemplateFactory) GetDataSourceInfo(id string) DataSourceInfo {
 	panic(id + " not exists in DataSource list")
 }
 
-// TODO bytest,
 func (o ModelTemplateFactory) findDataSourceInfo(id string) (DataSourceInfo, bool) {
 	rwlock.RLock()
 	defer rwlock.RUnlock()
@@ -105,7 +104,6 @@ func (o ModelTemplateFactory) findDataSourceInfo(id string) (DataSourceInfo, boo
 	return DataSourceInfo{}, false
 }
 
-// TODO, byTest
 func (o ModelTemplateFactory) clearDataSource() {
 	rwlock.Lock()
 	defer rwlock.Unlock()
@@ -113,7 +111,6 @@ func (o ModelTemplateFactory) clearDataSource() {
 	gDataSourceDict = map[string]DataSourceInfo{}
 }
 
-// TODO, byTest
 func (o ModelTemplateFactory) loadDataSource() {
 	rwlock.Lock()
 	defer rwlock.Unlock()
@@ -137,7 +134,6 @@ func (o ModelTemplateFactory) loadDataSource() {
 	}
 }
 
-// TODO, byTest
 func (o ModelTemplateFactory) loadSingleDataSourceWithLock(path string) (DataSourceInfo, error) {
 	rwlock.Lock()
 	defer rwlock.Unlock()
@@ -145,7 +141,6 @@ func (o ModelTemplateFactory) loadSingleDataSourceWithLock(path string) (DataSou
 	return o.loadSingleDataSource(path)
 }
 
-// TODO, byTest
 func (o ModelTemplateFactory) loadSingleDataSource(path string) (DataSourceInfo, error) {
 	file, err := os.Open(path)
 	defer file.Close()
@@ -431,10 +426,58 @@ func (o ModelTemplateFactory) getPoolFields() Fields {
 	return fields
 }
 
+func (o ModelTemplateFactory) getBusinessPoolFields() Fields {
+	fieldPoolPath := config.String("BUSINESS_FIELD_POOL_PATH")
+	file, err := os.Open(fieldPoolPath)
+	defer file.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		panic(err)
+	}
+
+	fields := Fields{}
+	err = xml.Unmarshal(data, &fields)
+
+	// extend from fieldpool
+	fieldPoolFields := o.getPoolFields()
+	fieldPoolGroupLi := []FieldGroup{}
+	for i, _ := range fieldPoolFields.FieldLi {
+		fieldPoolGroupLi = append(fieldPoolGroupLi, fieldPoolFields.FieldLi[i].FieldGroup)
+	}
+	for i, _ := range fields.FieldLi {
+		o.extendFieldPoolField(&fields.FieldLi[i].FieldGroup, fieldPoolGroupLi)
+	}
+	
+	// extend from self
+	fieldGroupLi := []FieldGroup{}
+	for i, _ := range fields.FieldLi {
+		fieldGroupLi = append(fieldGroupLi, fields.FieldLi[i].FieldGroup)
+	}
+	for i, _ := range fields.FieldLi {
+		o.extendFieldPoolField(&fields.FieldLi[i].FieldGroup, fieldGroupLi)
+	}
+	return fields
+}
+
 func (o ModelTemplateFactory) applyFieldExtend(dataSource *DataSource) {
 	modelIterator := ModelIterator{}
 	var result interface{} = ""
 
+	// extend from business_fieldpool
+	businessFields := o.getBusinessPoolFields()
+	businessFieldGroupLi := []FieldGroup{}
+	for i, _ := range businessFields.FieldLi {
+		businessFieldGroupLi = append(businessFieldGroupLi, businessFields.FieldLi[i].FieldGroup)
+	}
+	modelIterator.IterateAllField(dataSource, &result, func(fieldGroup *FieldGroup, result *interface{}) {
+		o.extendFieldPoolField(fieldGroup, businessFieldGroupLi)
+	})
+
+	// extend from fieldpool
 	fields := o.getPoolFields()
 	fieldGroupLi := []FieldGroup{}
 	for i, _ := range fields.FieldLi {
@@ -481,6 +524,13 @@ func (o ModelTemplateFactory) applyDefaultValueExpr(dataSource DataSource, bo *m
 			if fieldGroup.DefaultValueExpr.Mode == "" || fieldGroup.DefaultValueExpr.Mode == "text" {
 				content = fieldGroup.DefaultValueExpr.Content
 			} else if fieldGroup.DefaultValueExpr.Mode == "python" {
+				dataJsonData, err := json.Marshal(data)
+				if err != nil {
+					panic(err)
+				}
+				dataJson := string(dataJsonData)
+				content = expressionParser.ParseModel(boJson, dataJson, fieldGroup.DefaultValueExpr.Content)
+			} else if fieldGroup.DefaultValueExpr.Mode == "js" {
 				dataJsonData, err := json.Marshal(data)
 				if err != nil {
 					panic(err)

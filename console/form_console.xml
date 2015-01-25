@@ -125,6 +125,8 @@
 
 		<virtual-column name="FUN_C" text="操作" width="120">
 			<buttons>
+				<button text="raw xml" iconCls="img_look" mode="url^" handler="/console/rawxml?@name={id}&amp;type=DataSource">
+				</button>
 				<button text="xml" iconCls="img_look" mode="url^" handler="/console/xml?@name={id}&amp;type=DataSource">
 				</button>
 			</buttons>

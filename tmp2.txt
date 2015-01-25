@@ -289,15 +289,52 @@ main.go要有什么东东,然后,哪些应该在框架里面,哪些应该在自�
 basedataaction的相关东东,如何来进行替换?
 
 1.数据源模型控制台中的内容,
-1.1.列表操作栏,running,-----------------------------,
-1.3.还有一个访问的按钮,
-	listschema,报错,@报错,难道有问题?	finish,
-		进行relation方法的添加,finish,
-	selectorschema,running,------------------------------,
-	formschema,
-1.2.重构按钮,
+1.1.列表操作栏,
+1.3.还有一个访问的按钮,finish,接下来,一个个地往上折腾,全部搞定后,
+修改所有的数据,finish,
+1.3.1.简单的点一点,看是否都可以成功,
+	"github.com/hongjinqiu/gometa-financedemo/accountingperiod"
+	"github.com/hongjinqiu/gometa-financedemo/accountinit"
+	"github.com/hongjinqiu/gometa-financedemo/actiontest"
+	"github.com/hongjinqiu/gometa-financedemo/article"
+	"github.com/hongjinqiu/gometa-financedemo/articletype"
+	"github.com/hongjinqiu/gometa-financedemo/balancetype"
+	"github.com/hongjinqiu/gometa-financedemo/bank"
+	"github.com/hongjinqiu/gometa-financedemo/bankaccount"
+	"github.com/hongjinqiu/gometa-financedemo/bankaccountinit"
+	"github.com/hongjinqiu/gometa-financedemo/bbspost"
+	"github.com/hongjinqiu/gometa-financedemo/billpaymenttypeparameter"
+	"github.com/hongjinqiu/gometa-financedemo/billreceivetypeparameter"
+	"github.com/hongjinqiu/gometa-financedemo/billtype"
+	"github.com/hongjinqiu/gometa-financedemo/cashaccount"
+	"github.com/hongjinqiu/gometa-financedemo/cashaccountinit"
+	"github.com/hongjinqiu/gometa-financedemo/currencytype"
+	"github.com/hongjinqiu/gometa-financedemo/customer"
+	"github.com/hongjinqiu/gometa-financedemo/customertype"
+	"github.com/hongjinqiu/gometa-financedemo/demo"
+	"github.com/hongjinqiu/gometa-financedemo/gatheringbill"
+		
+	"github.com/hongjinqiu/gometa-financedemo/incomeitem"
+	"github.com/hongjinqiu/gometa-financedemo/incometype"
+	"github.com/hongjinqiu/gometa-financedemo/measureunit"
+	"github.com/hongjinqiu/gometa-financedemo/paybill"
+	"github.com/hongjinqiu/gometa-financedemo/paypact"
+	"github.com/hongjinqiu/gometa-financedemo/provider"
+	"github.com/hongjinqiu/gometa-financedemo/providertype"
+	"github.com/hongjinqiu/gometa-financedemo/pubreferencelog"
+	"github.com/hongjinqiu/gometa-financedemo/systemparameter"
+	"github.com/hongjinqiu/gometa-financedemo/sysuser"
+	"github.com/hongjinqiu/gometa-financedemo/taxtype"
+	
+1.4.然后是首页的相关的东东的折腾,然后就可以先放一边了,finish,
+1.4.2.异常拦截器,需要自己添加上,finish,
+1.2.重构按钮,finish,
+1.3.business_fieldpool.xml,修改成id放空时,读取extend的东东做为id,finish,
+1.3.1.简单的测试一下，
+1.4.然后不加功能的情况下,简单的重构,主要是改名即可,
+1.5.
 
-有个bug,debug没有重新计算ds_xxx.xml,继续折腾,为什么没有返回内容?
+开始简单地推广一番,并准备找工作,
 
 
 

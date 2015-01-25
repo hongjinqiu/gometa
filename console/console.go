@@ -353,6 +353,35 @@ func (c Console) RawXml(w http.ResponseWriter, r *http.Request) {
 		w.Write(xmlData)
 		return
 	}
+	if refretorType == "DataSource" {
+		modelTemplateFactory := ModelTemplateFactory{}
+		dataSourceInfo := modelTemplateFactory.GetDataSourceInfo(id)
+		dataSource := DataSource{}
+
+		file, err := os.Open(dataSourceInfo.Path)
+		defer file.Close()
+		if err != nil {
+			panic(err)
+		}
+
+		data, err := ioutil.ReadAll(file)
+		if err != nil {
+			panic(err)
+		}
+
+		err = xml.Unmarshal(data, &dataSource)
+		if err != nil {
+			panic(err)
+		}
+
+		w.Header()["Content-Type"] = []string{"application/xml; charset=utf-8"}
+		xmlData, err := xml.MarshalIndent(&dataSource, "", "\t")
+		if err != nil {
+			panic(err)
+		}
+		w.Write(xmlData)
+		return
+	}
 
 	w.Header()["Content-Type"] = []string{"application/json; charset=utf-8"}
 	data, err := json.MarshalIndent(map[string]interface{}{
@@ -385,15 +414,11 @@ func (self Console) ListSchema(w http.ResponseWriter, r *http.Request) {
 			}
 			w.Write(data)
 			return
-			//			c.Response.ContentType = "application/json; charset=utf-8"
-			//			return c.RenderJson(&dataBo)
 		}
 		dataBoText := result["dataBoText"].(string)
 		w.Header()["Content-Type"] = []string{"text/javascript; charset=utf-8"}
-		w.Write([]byte(dataBoText))
+		w.Write([]byte(callback + "(" + dataBoText + ");"))
 		return
-		//		c.Response.ContentType = "text/javascript; charset=utf-8"
-		//		return c.RenderText(callback + "(" + dataBoText + ");")
 	} else {
 		//c.Response.ContentType = "text/html; charset=utf-8"
 		/*
@@ -429,6 +454,143 @@ func (self Console) ListSchema(w http.ResponseWriter, r *http.Request) {
 		err = tmpl.Execute(w, tmplResult)
 		if err != nil {
 			panic(err)
+		}
+	}
+}
+
+func (self Console) SelectorSchema(w http.ResponseWriter, r *http.Request) {
+	sessionId := global.GetSessionId()
+	global.SetGlobalAttr(sessionId, "userId", session.GetFromSession(w, r, "userId"))
+	global.SetGlobalAttr(sessionId, "adminUserId", session.GetFromSession(w, r, "adminUserId"))
+	defer global.CloseSession(sessionId)
+
+	schemaName := r.FormValue("@name")
+
+	templateManager := TemplateManager{}
+	listTemplate := templateManager.GetSelectorTemplate(schemaName)
+	self.setSelectionMode(r, &listTemplate)
+	self.setDisplayField(r, &listTemplate)
+	isGetBo := false
+	if r.FormValue("format") != "" {
+		isGetBo = true
+	}
+	isFromList := false
+	result := self.listSelectorCommon(w, r, &listTemplate, isGetBo, isFromList)
+
+	selectionBo := map[string]interface{}{
+		"url":         templateManager.GetViewUrl(listTemplate),
+		"Description": listTemplate.Description,
+	}
+	ids := r.FormValue("@id")
+	if ids != "" {
+		relationLi := []map[string]interface{}{}
+		strIdLi := strings.Split(ids, ",")
+		selectorId := listTemplate.SelectorId
+		if selectorId == "" {
+			selectorId = listTemplate.Id
+		}
+		for _, item := range strIdLi {
+			if item != "" {
+				id, err := strconv.Atoi(item)
+				if err != nil {
+					panic(err)
+				}
+				relationLi = append(relationLi, map[string]interface{}{
+					"relationId": id,
+					"selectorId": selectorId,
+				})
+			}
+		}
+		templateManager := TemplateManager{}
+		relationBo := templateManager.GetRelationBo(sessionId, relationLi)
+		if relationBo[selectorId] != nil {
+			selectionBo = relationBo[selectorId].(map[string]interface{})
+		}
+	}
+	selectionBoByte, err := json.Marshal(&selectionBo)
+	if err != nil {
+		panic(err)
+	}
+
+	commonUtil := CommonUtil{}
+	selectionBoJson := string(selectionBoByte)
+	selectionBoJson = commonUtil.FilterJsonEmptyAttr(selectionBoJson)
+	result["selectionBoJson"] = template.JS(selectionBoJson)
+
+	format := r.FormValue("format")
+	if strings.ToLower(format) == "json" {
+		callback := r.FormValue("callback")
+		if callback == "" {
+			dataBo := result["dataBo"]
+			w.Header()["Content-Type"] = []string{"application/json; charset=utf-8"}
+			data, err := json.Marshal(&dataBo)
+			if err != nil {
+				panic(err)
+			}
+			w.Write(data)
+			return
+		}
+		dataBoText := result["dataBoText"].(string)
+		w.Header()["Content-Type"] = []string{"text/javascript; charset=utf-8"}
+		w.Write([]byte(callback + "(" + dataBoText + ");"))
+		return
+	} else {
+		//		return self.Render(result)
+		//self.Response.ContentType = "text/html; charset=utf-8"
+		//		self.RenderArgs["result"] = result
+		//		return self.RenderTemplate(listTemplate.ViewTemplate.SelectorView)
+		tmplResult := map[string]interface{}{
+			"result": result,
+		}
+		result["ListPageContent"] = template.HTML(self.getListPageContent(tmplResult))
+		result["ListQueryParameterContent"] = template.HTML(self.getListQueryParameterContent(tmplResult))
+
+		viewPath := config.String("VIEW_PATH")
+		file, err := os.Open(viewPath + "/" + listTemplate.ViewTemplate.SelectorView)
+		defer file.Close()
+		if err != nil {
+			panic(err)
+		}
+
+		fileContent, err := ioutil.ReadAll(file)
+		if err != nil {
+			panic(err)
+		}
+		strContent := string(fileContent)
+		tmpl, err := template.New("SelectorSchema").Funcs(self.getFuncMap()).Parse(strContent)
+		if err != nil {
+			panic(err)
+		}
+		err = tmpl.Execute(w, tmplResult)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func (self Console) setSelectionMode(r *http.Request, listTemplate *ListTemplate) {
+	multi := r.FormValue("@multi")
+	if multi != "" {
+		if multi == "true" {
+			listTemplate.ColumnModel.SelectionMode = "checkbox"
+		} else {
+			listTemplate.ColumnModel.SelectionMode = "radio"
+		}
+	}
+}
+
+func (c Console) setDisplayField(r *http.Request, listTemplate *ListTemplate) {
+	displayField := r.FormValue("@displayField")
+	if displayField != "" {
+		if strings.Contains(displayField, "{") {
+			listTemplate.ColumnModel.SelectionTemplate = displayField
+		} else {
+			strFieldLi := strings.Split(displayField, ",")
+			fieldLi := []string{}
+			for _, item := range strFieldLi {
+				fieldLi = append(fieldLi, "{"+item+"}")
+			}
+			listTemplate.ColumnModel.SelectionTemplate = strings.Join(fieldLi, ",")
 		}
 	}
 }
@@ -841,4 +1003,353 @@ func (self Console) Relation(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	w.Write(data)
+}
+
+func (c Console) FormSchema(w http.ResponseWriter, r *http.Request) {
+	sessionId := global.GetSessionId()
+	global.SetGlobalAttr(sessionId, "userId", session.GetFromSession(w, r, "userId"))
+	global.SetGlobalAttr(sessionId, "adminUserId", session.GetFromSession(w, r, "adminUserId"))
+	defer global.CloseSession(sessionId)
+
+	schemaName := r.FormValue("@name")
+	strId := r.FormValue("id")
+	formStatus := r.FormValue("formStatus")
+	copyFlag := r.FormValue("copyFlag")
+
+	templateManager := TemplateManager{}
+	formTemplate := templateManager.GetFormTemplate(schemaName)
+
+	result := map[string]interface{}{
+		"formTemplate": formTemplate,
+		"id":           strId,
+		"formStatus":   formStatus,
+		"copyFlag":     copyFlag,
+	}
+	if formTemplate.DataSourceModelId != "" {
+		// 光有formTemplate不行,还要有model的内容,才可以渲染数据
+		modelTemplateFactory := ModelTemplateFactory{}
+		dataSource := modelTemplateFactory.GetDataSource(formTemplate.DataSourceModelId)
+		modelTemplateFactory.ClearReverseRelation(&dataSource)
+		dataSourceByte, err := json.Marshal(&dataSource)
+		if err != nil {
+			panic(err)
+		}
+		result["dataSource"] = dataSource
+		commonUtil := CommonUtil{}
+		dataSourceJson := string(dataSourceByte)
+		dataSourceJson = commonUtil.FilterJsonEmptyAttr(dataSourceJson)
+		result["dataSourceJson"] = template.JS(dataSourceJson)
+	}
+	//toolbarBo
+	toolbarBo := map[string]interface{}{}
+	for i, item := range formTemplate.FormElemLi {
+		if item.XMLName.Local == "toolbar" {
+			toolbarBo[item.Toolbar.Name] = templateManager.GetToolbarBo(item.Toolbar)
+		}
+		// 加入主数据集tag,页面渲染用
+		if item.XMLName.Local == "column-model" && item.ColumnModel.DataSetId == "A" {
+			formTemplate.FormElemLi[i].RenderTag = item.ColumnModel.DataSetId + "_" + fmt.Sprint(i)
+		}
+	}
+	result["toolbarBo"] = toolbarBo
+	dataBo := map[string]interface{}{}
+	relationBo := map[string]interface{}{}
+	result["dataBo"] = dataBo
+	result["relationBo"] = relationBo
+
+	relationBoByte, err := json.Marshal(&relationBo)
+	if err != nil {
+		panic(err)
+	}
+
+	// 主数据集的后台渲染
+	result["masterRenderLi"] = c.getMasterRenderLi(formTemplate)
+
+	formTemplateJsonDataArray, err := json.Marshal(&formTemplate)
+	if err != nil {
+		panic(err)
+	}
+
+	dataBoByte, err := json.Marshal(&dataBo)
+	if err != nil {
+		panic(err)
+	}
+
+	layerBo := templateManager.GetLayerForFormTemplate(sessionId, formTemplate)
+	iLayerBo := layerBo["layerBo"]
+	layerBoByte, err := json.Marshal(&iLayerBo)
+	if err != nil {
+		panic(err)
+	}
+	iLayerBoLi := layerBo["layerBoLi"]
+	layerBoLiByte, err := json.Marshal(&iLayerBoLi)
+	if err != nil {
+		panic(err)
+	}
+
+	commonUtil := CommonUtil{}
+	userId := commonUtil.GetIntFromString(session.GetFromSession(w, r, "userId"))
+	sysParam := c.getSysParam(sessionId, userId)
+	sysParamJson, err := json.Marshal(&sysParam)
+	if err != nil {
+		panic(err)
+	}
+	result["sysParamJson"] = template.JS(string(sysParamJson))
+
+	formTemplateJsonData := string(formTemplateJsonDataArray)
+	formTemplateJsonData = commonUtil.FilterJsonEmptyAttr(formTemplateJsonData)
+	result["formTemplateJsonData"] = template.JS(formTemplateJsonData)
+	dataBoJson := string(dataBoByte)
+	dataBoJson = commonUtil.FilterJsonEmptyAttr(dataBoJson)
+	result["dataBoJson"] = template.JS(dataBoJson)
+	layerBoJson := string(layerBoByte)
+	layerBoJson = commonUtil.FilterJsonEmptyAttr(layerBoJson)
+	result["layerBoJson"] = template.JS(layerBoJson)
+	layerBoLiJson := string(layerBoLiByte)
+	layerBoLiJson = commonUtil.FilterJsonEmptyAttr(layerBoLiJson)
+	result["layerBoLiJson"] = template.JS(layerBoLiJson)
+	relationBoJson := string(relationBoByte)
+	relationBoJson = commonUtil.FilterJsonEmptyAttr(relationBoJson)
+	result["relationBoJson"] = template.JS(relationBoJson)
+
+	viewPath := config.String("VIEW_PATH")
+	file, err := os.Open(viewPath + "/" + formTemplate.ViewTemplate.View)
+	defer file.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	fileContent, err := ioutil.ReadAll(file)
+	if err != nil {
+		panic(err)
+	}
+	funcMap := map[string]interface{}{
+		"eq": func(a, b interface{}) bool {
+			return a == b
+		},
+	}
+	//c.Response.ContentType = "text/html; charset=utf-8"
+	tmpl, err := template.New("formSchema").Funcs(funcMap).Parse(string(fileContent))
+	if err != nil {
+		panic(err)
+	}
+	tmplResult := map[string]interface{}{
+		"result": result,
+		//		"flash": c.Flash.Out,
+		//		"session": c.Session,
+	}
+	err = tmpl.Execute(w, tmplResult)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (c Console) getMasterRenderLi(formTemplate FormTemplate) map[string]interface{} {
+	if formTemplate.DataSourceModelId == "" {
+		return nil
+	}
+	result := map[string]interface{}{}
+
+	modelTemplateFactory := ModelTemplateFactory{}
+	dataSource := modelTemplateFactory.GetDataSource(formTemplate.DataSourceModelId)
+
+	modelIterator := ModelIterator{}
+	var message interface{} = ""
+	for i, item := range formTemplate.FormElemLi {
+		if item.XMLName.Local == "column-model" && item.ColumnModel.DataSetId == "A" {
+			lineColSpan, err := strconv.Atoi(item.ColumnModel.ColSpan)
+			if err != nil {
+				lineColSpan = 1
+			}
+			container := [][]map[string]interface{}{}
+			containerItem := []map[string]interface{}{}
+			lineColSpanSum := 0
+			for _, column := range item.ColumnModel.ColumnLi {
+				if column.XMLName.Local == "html" {
+					columnColSpan, err := strconv.Atoi(column.ColSpan)
+					if err != nil {
+						columnColSpan = 1
+					}
+					containerItem = append(containerItem, map[string]interface{}{
+						"isHtml": "true",
+						"html":   column.Html,
+					})
+					lineColSpanSum += columnColSpan
+					if lineColSpanSum >= lineColSpan {
+						container = append(container, containerItem)
+						containerItem = []map[string]interface{}{}
+						lineColSpanSum = lineColSpanSum - lineColSpan
+					}
+				} else {
+					isModelField := false
+					modelIterator.IterateAllField(&dataSource, &message, func(fieldGroup *FieldGroup, result *interface{}) {
+						if fieldGroup.IsMasterField() && fieldGroup.Id == column.Name {
+							isModelField = true
+							if column.Hideable != "true" && column.ManualRender != "true" {
+								columnColSpan, err := strconv.Atoi(column.ColSpan)
+								if err != nil {
+									columnColSpan = 1
+								}
+								containerItem = append(containerItem, map[string]interface{}{
+									"isHtml":      "false",
+									"required":    fmt.Sprint(fieldGroup.AllowEmpty == "false"),
+									"label":       column.Text,
+									"name":        column.Name,
+									"columnWidth": column.ColumnWidth,
+									"columnSpan":  columnColSpan - 1,
+									"labelWidth":  column.LabelWidth,
+								})
+								lineColSpanSum += columnColSpan
+								if lineColSpanSum >= lineColSpan {
+									container = append(container, containerItem)
+									containerItem = []map[string]interface{}{}
+									lineColSpanSum = lineColSpanSum - lineColSpan
+								}
+							}
+						}
+					})
+					if !isModelField {
+						if column.Hideable != "true" && column.ManualRender != "true" {
+							columnColSpan, err := strconv.Atoi(column.ColSpan)
+							if err != nil {
+								columnColSpan = 1
+							}
+							containerItem = append(containerItem, map[string]interface{}{
+								"isHtml":      "false",
+								"required":    false,
+								"label":       column.Text,
+								"name":        column.Name,
+								"columnWidth": column.ColumnWidth,
+								"columnSpan":  columnColSpan - 1,
+								"labelWidth":  column.LabelWidth,
+							})
+							lineColSpanSum += columnColSpan
+							if lineColSpanSum >= lineColSpan {
+								container = append(container, containerItem)
+								containerItem = []map[string]interface{}{}
+								lineColSpanSum = lineColSpanSum - lineColSpan
+							}
+						}
+					}
+				}
+			}
+			if 0 < lineColSpanSum && lineColSpanSum < lineColSpan {
+				container = append(container, containerItem)
+			}
+			result[item.DataSetId+"_"+fmt.Sprint(i)] = container
+		}
+	}
+
+	return result
+}
+
+func (c Console) Refretor(w http.ResponseWriter, r *http.Request) {
+	sessionId := global.GetSessionId()
+	global.SetGlobalAttr(sessionId, "userId", session.GetFromSession(w, r, "userId"))
+	global.SetGlobalAttr(sessionId, "adminUserId", session.GetFromSession(w, r, "adminUserId"))
+	defer global.CloseSession(sessionId)
+
+	refretorType := r.FormValue("type")
+	templateManager := TemplateManager{}
+	formTemplate := templateManager.GetFormTemplate("Console")
+
+	if refretorType == "Component" {
+		listTemplateInfoLi := templateManager.RefretorListTemplateInfo()
+		items := getSummaryListTemplateInfoLi(listTemplateInfoLi)
+		for _, item := range formTemplate.FormElemLi {
+			if item.XMLName.Local == "column-model" && item.ColumnModel.Name == "Component" {
+				itemsDict := templateManager.GetColumnModelDataForColumnModel(sessionId, item.ColumnModel, items)
+				items = itemsDict["items"].([]interface{})
+				break
+			}
+		}
+
+		dataBo := map[string]interface{}{
+			"items": items,
+		}
+
+		w.Header()["Content-Type"] = []string{"application/json; charset=utf-8"}
+		data, err := json.Marshal(&dataBo)
+		if err != nil {
+			panic(err)
+		}
+		w.Write(data)
+		return
+	}
+	if refretorType == "Selector" {
+		selectorTemplateInfoLi := templateManager.RefretorSelectorTemplateInfo()
+		items := getSummarySelectorTemplateInfoLi(selectorTemplateInfoLi)
+		for _, item := range formTemplate.FormElemLi {
+			if item.XMLName.Local == "column-model" && item.ColumnModel.Name == "Selector" {
+				itemsDict := templateManager.GetColumnModelDataForColumnModel(sessionId, item.ColumnModel, items)
+				items = itemsDict["items"].([]interface{})
+				break
+			}
+		}
+
+		dataBo := map[string]interface{}{
+			"items": items,
+		}
+		w.Header()["Content-Type"] = []string{"application/json; charset=utf-8"}
+		data, err := json.Marshal(&dataBo)
+		if err != nil {
+			panic(err)
+		}
+		w.Write(data)
+		return
+	}
+	if refretorType == "Form" {
+		formTemplateInfoLi := templateManager.RefretorFormTemplateInfo()
+		items := getSummaryFormTemplateInfoLi(formTemplateInfoLi)
+		for _, item := range formTemplate.FormElemLi {
+			if item.XMLName.Local == "column-model" && item.ColumnModel.Name == "Form" {
+				itemsDict := templateManager.GetColumnModelDataForColumnModel(sessionId, item.ColumnModel, items)
+				items = itemsDict["items"].([]interface{})
+				break
+			}
+		}
+
+		dataBo := map[string]interface{}{
+			"items": items,
+		}
+		w.Header()["Content-Type"] = []string{"application/json; charset=utf-8"}
+		data, err := json.Marshal(&dataBo)
+		if err != nil {
+			panic(err)
+		}
+		w.Write(data)
+		return
+	}
+	if refretorType == "DataSource" {
+		modelTemplateFactory := ModelTemplateFactory{}
+		dataSourceTemplateInfoLi := modelTemplateFactory.RefretorDataSourceInfo()
+		items := getSummaryDataSourceInfoLi(dataSourceTemplateInfoLi)
+		for _, item := range formTemplate.FormElemLi {
+			if item.XMLName.Local == "column-model" && item.ColumnModel.Name == "DataSource" {
+				itemsDict := templateManager.GetColumnModelDataForColumnModel(sessionId, item.ColumnModel, items)
+				items = itemsDict["items"].([]interface{})
+				break
+			}
+		}
+
+		dataBo := map[string]interface{}{
+			"items": items,
+		}
+		w.Header()["Content-Type"] = []string{"application/json; charset=utf-8"}
+		data, err := json.Marshal(&dataBo)
+		if err != nil {
+			panic(err)
+		}
+		w.Write(data)
+		return
+	}
+	w.Header()["Content-Type"] = []string{"application/json; charset=utf-8"}
+	data, err := json.Marshal(map[string]interface{}{
+		"message": "可能传入了错误的refretorType:" + refretorType,
+	})
+	if err != nil {
+		panic(err)
+	}
+	w.Write(data)
+	return
 }

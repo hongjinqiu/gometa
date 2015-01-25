@@ -6,7 +6,7 @@ import (
 	. "github.com/hongjinqiu/gometa/mongo"
 	. "github.com/hongjinqiu/gometa/common"
 	"fmt"
-	"labix.org/v2/mgo"
+	"gopkg.in/mgo.v2"
 	"log"
 	"strconv"
 	"encoding/json"

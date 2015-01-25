@@ -4,7 +4,7 @@ import (
 	"github.com/hongjinqiu/gometa/mongo"
 	"encoding/json"
 	"fmt"
-	"labix.org/v2/mgo"
+	"gopkg.in/mgo.v2"
 	"reflect"
 	"strconv"
 	"strings"
