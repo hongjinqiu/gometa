@@ -24,33 +24,33 @@ type BillAction struct {
 
 func (c BillAction) SaveData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
-	modelRenderVO := c.RSaveCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	modelRenderVO := c.SaveCommon(w, r)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
 func (c BillAction) DeleteData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
 
-	modelRenderVO := c.RDeleteDataCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	modelRenderVO := c.DeleteDataCommon(w, r)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
 func (c BillAction) EditData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
-	modelRenderVO := c.REditDataCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	modelRenderVO := c.EditDataCommon(w, r)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
 func (c BillAction) NewData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
 	modelRenderVO := c.RNewDataCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
 func (c BillAction) GetData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
-	modelRenderVO := c.RGetDataCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	modelRenderVO := c.GetDataCommon(w, r)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
 /**
@@ -58,8 +58,8 @@ func (c BillAction) GetData(w http.ResponseWriter, r *http.Request) {
  */
 func (c BillAction) CopyData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
-	modelRenderVO := c.RCopyDataCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	modelRenderVO := c.CopyDataCommon(w, r)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
 /**
@@ -67,8 +67,8 @@ func (c BillAction) CopyData(w http.ResponseWriter, r *http.Request) {
  */
 func (c BillAction) GiveUpData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
-	modelRenderVO := c.RGiveUpDataCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	modelRenderVO := c.GiveUpDataCommon(w, r)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
 /**
@@ -76,12 +76,12 @@ func (c BillAction) GiveUpData(w http.ResponseWriter, r *http.Request) {
  */
 func (c BillAction) RefreshData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
-	modelRenderVO := c.RRefreshDataCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	modelRenderVO := c.RefreshDataCommon(w, r)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
 func (c BillAction) LogList(w http.ResponseWriter, r *http.Request) {
-	result := c.RLogListCommon(w, r)
+	result := c.LogListCommon(w, r)
 
 	format := r.FormValue("format")
 	if strings.ToLower(format) == "json" {
@@ -102,16 +102,16 @@ func (c BillAction) LogList(w http.ResponseWriter, r *http.Request) {
  */
 func (c BillAction) CancelData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
-	modelRenderVO := c.RCancelDataCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	modelRenderVO := c.CancelDataCommon(w, r)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
-func (c BillAction) RCancelDataCommon(w http.ResponseWriter, r *http.Request) ModelRenderVO {
+func (c BillAction) CancelDataCommon(w http.ResponseWriter, r *http.Request) ModelRenderVO {
 	sessionId := global.GetSessionId()
 	global.SetGlobalAttr(sessionId, "userId", session.GetFromSession(w, r, "userId"))
 	global.SetGlobalAttr(sessionId, "adminUserId", session.GetFromSession(w, r, "adminUserId"))
 	defer global.CloseSession(sessionId)
-	defer c.RRollbackTxn(sessionId)
+	defer c.RollbackTxn(sessionId)
 
 	userId, err := strconv.Atoi(session.GetFromSession(w, r, "userId"))
 	if err != nil {
@@ -148,8 +148,8 @@ func (c BillAction) RCancelDataCommon(w http.ResponseWriter, r *http.Request) Mo
 	c.setRequestParameterToBo(r, &bo)
 
 	modelTemplateFactory.ConvertDataType(dataSource, &bo)
-	c.RSetModifyFixFieldValue(sessionId, dataSource, &bo)
-	c.RActionSupport.RBeforeCancelData(sessionId, dataSource, formTemplate, &bo)
+	c.SetModifyFixFieldValue(sessionId, dataSource, &bo)
+	c.RActionSupport.BeforeCancelData(sessionId, dataSource, formTemplate, &bo)
 	mainData := bo["A"].(map[string]interface{})
 	bo["A"] = mainData
 	if fmt.Sprint(mainData["billStatus"]) == "4" {
@@ -165,7 +165,7 @@ func (c BillAction) RCancelDataCommon(w http.ResponseWriter, r *http.Request) Mo
 		panic("作废失败")
 	}
 
-	c.RActionSupport.RAfterCancelData(sessionId, dataSource, formTemplate, &bo)
+	c.RActionSupport.AfterCancelData(sessionId, dataSource, formTemplate, &bo)
 
 	bo, _ = querySupport.FindByMap(collectionName, queryMap)
 
@@ -193,16 +193,16 @@ func (c BillAction) RCancelDataCommon(w http.ResponseWriter, r *http.Request) Mo
  */
 func (c BillAction) UnCancelData(w http.ResponseWriter, r *http.Request) {
 	c.RActionSupport = ActionSupport{}
-	modelRenderVO := c.RUnCancelDataCommon(w, r)
-	c.RRenderCommon(w, r, modelRenderVO)
+	modelRenderVO := c.UnCancelDataCommon(w, r)
+	c.RenderCommon(w, r, modelRenderVO)
 }
 
-func (c BillAction) RUnCancelDataCommon(w http.ResponseWriter, r *http.Request) ModelRenderVO {
+func (c BillAction) UnCancelDataCommon(w http.ResponseWriter, r *http.Request) ModelRenderVO {
 	sessionId := global.GetSessionId()
 	global.SetGlobalAttr(sessionId, "userId", session.GetFromSession(w, r, "userId"))
 	global.SetGlobalAttr(sessionId, "adminUserId", session.GetFromSession(w, r, "adminUserId"))
 	defer global.CloseSession(sessionId)
-	defer c.RRollbackTxn(sessionId)
+	defer c.RollbackTxn(sessionId)
 
 	userId, err := strconv.Atoi(session.GetFromSession(w, r, "userId"))
 	if err != nil {
@@ -239,8 +239,8 @@ func (c BillAction) RUnCancelDataCommon(w http.ResponseWriter, r *http.Request) 
 	c.setRequestParameterToBo(r, &bo)
 
 	modelTemplateFactory.ConvertDataType(dataSource, &bo)
-	c.RSetModifyFixFieldValue(sessionId, dataSource, &bo)
-	c.RActionSupport.RBeforeUnCancelData(sessionId, dataSource, formTemplate, &bo)
+	c.SetModifyFixFieldValue(sessionId, dataSource, &bo)
+	c.RActionSupport.BeforeUnCancelData(sessionId, dataSource, formTemplate, &bo)
 	mainData := bo["A"].(map[string]interface{})
 	if fmt.Sprint(mainData["billStatus"]) == "1" {
 		panic(BusinessError{Message: "单据已经反作废，不可再次反作废"})
@@ -255,7 +255,7 @@ func (c BillAction) RUnCancelDataCommon(w http.ResponseWriter, r *http.Request) 
 		panic("反作废失败")
 	}
 
-	c.RActionSupport.RAfterUnCancelData(sessionId, dataSource, formTemplate, &bo)
+	c.RActionSupport.AfterUnCancelData(sessionId, dataSource, formTemplate, &bo)
 
 	bo, _ = querySupport.FindByMap(collectionName, queryMap)
 
