@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.papersns.com/template" xmlns:tns="http://www.papersns.com/template" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="https://github.com/hongjinqiu/gometa/template" xmlns:tns="https://github.com/hongjinqiu/gometa/template" elementFormDefault="qualified">
 	<annotation>
 		<appinfo>framework.component for MongoDB</appinfo>
 		<documentation>MongoDB查询框架约束规范</documentation>

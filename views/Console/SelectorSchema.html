@@ -136,7 +136,7 @@
 									<input type="button" value="{{$value.Text}}" class="{{$value.IconCls}}" onclick="location.href='{{$value.Handler}}'"/>
 								{{end}}
 								{{if eq $value.Mode "url^"}}
-									<input type="button" value="{{$value.Text}}" class="{{$value.IconCls}}" onclick="alert('需要用弹出{{$value.Handler}}')"/>
+									<input type="button" value="{{$value.Text}}" class="{{$value.IconCls}}" onclick="window.open('{{$value.Handler}}')"/>
 								{{end}}
 								{{if eq $value.Mode "url!"}}
 									<input type="button" value="{{$value.Text}}" class="{{$value.IconCls}}" onclick="openTabOrJump('{{$value.Handler}}')"/>

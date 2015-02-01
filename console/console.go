@@ -393,6 +393,92 @@ func (c Console) RawXml(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+func (c Console) RawXmlContent(w http.ResponseWriter, r *http.Request) {
+	refretorType := r.URL.Query().Get("type")
+	id := r.URL.Query().Get("@name")
+	templateManager := TemplateManager{}
+
+	if refretorType == "Component" {
+		listTemplateInfo := templateManager.GetListTemplateInfo(id)
+		file, err := os.Open(listTemplateInfo.Path)
+		defer file.Close()
+		if err != nil {
+			panic(err)
+		}
+
+		data, err := ioutil.ReadAll(file)
+		if err != nil {
+			panic(err)
+		}
+
+		w.Header()["Content-Type"] = []string{"application/xml; charset=utf-8"}
+		w.Write(data)
+		return
+	}
+	if refretorType == "Selector" {
+		selectorTemplateInfo := templateManager.GetSelectorTemplateInfo(id)
+		file, err := os.Open(selectorTemplateInfo.Path)
+		defer file.Close()
+		if err != nil {
+			panic(err)
+		}
+
+		data, err := ioutil.ReadAll(file)
+		if err != nil {
+			panic(err)
+		}
+
+		w.Header()["Content-Type"] = []string{"application/xml; charset=utf-8"}
+		w.Write(data)
+		return
+	}
+	if refretorType == "Form" {
+		formTemplateInfo := templateManager.GetFormTemplateInfo(id)
+		file, err := os.Open(formTemplateInfo.Path)
+		defer file.Close()
+		if err != nil {
+			panic(err)
+		}
+
+		data, err := ioutil.ReadAll(file)
+		if err != nil {
+			panic(err)
+		}
+
+		w.Header()["Content-Type"] = []string{"application/xml; charset=utf-8"}
+		w.Write(data)
+		return
+	}
+	if refretorType == "DataSource" {
+		modelTemplateFactory := ModelTemplateFactory{}
+		dataSourceInfo := modelTemplateFactory.GetDataSourceInfo(id)
+
+		file, err := os.Open(dataSourceInfo.Path)
+		defer file.Close()
+		if err != nil {
+			panic(err)
+		}
+
+		data, err := ioutil.ReadAll(file)
+		if err != nil {
+			panic(err)
+		}
+
+		w.Header()["Content-Type"] = []string{"application/xml; charset=utf-8"}
+		w.Write(data)
+		return
+	}
+
+	w.Header()["Content-Type"] = []string{"application/json; charset=utf-8"}
+	data, err := json.MarshalIndent(map[string]interface{}{
+		"message": "可能传入了错误的refretorType:" + refretorType,
+	}, "", "\t")
+	if err != nil {
+		panic(err)
+	}
+	w.Write(data)
+}
+
 func (self Console) ListSchema(w http.ResponseWriter, r *http.Request) {
 	schemaName := r.URL.Query().Get("@name")
 

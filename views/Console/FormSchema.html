@@ -123,7 +123,7 @@
 										<input type="button" id="{{$btnValue.Name}}" value="{{$btnValue.Text}}" class="{{$btnValue.IconCls}}" onclick="location.href='{{$btnValue.Handler}}'"/>
 									{{end}}
 									{{if eq $btnValue.Mode "url^"}}
-										<input type="button" id="{{$btnValue.Name}}" value="{{$btnValue.Text}}" class="{{$btnValue.IconCls}}" onclick="alert('需要用弹出{{$btnValue.Handler}}')"/>
+										<input type="button" id="{{$btnValue.Name}}" value="{{$btnValue.Text}}" class="{{$btnValue.IconCls}}" onclick="window.open('{{$btnValue.Handler}}')"/>
 									{{end}}
 								{{end}}
 							{{end}}
@@ -235,7 +235,7 @@
 							<input type="button" value="{{$tbarItem.Text}}" class="{{$tbarItem.IconCls}}" onclick="location.href='{{$tbarItem.Handler}}'"/>
 						{{end}}
 						{{if eq $tbarItem.Mode "url^"}}
-							<input type="button" value="{{$tbarItem.Text}}" class="{{$tbarItem.IconCls}}" onclick="alert('需要用弹出{{$tbarItem.Handler}}')"/>
+							<input type="button" value="{{$tbarItem.Text}}" class="{{$tbarItem.IconCls}}" onclick="window.open('{{$tbarItem.Handler}}')"/>
 						{{end}}
 					{{end}}
 					</div>
