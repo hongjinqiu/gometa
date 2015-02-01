@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fields xmlns="http://www.papersns.com/fieldpool" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://github.com/hongjinqiu/gometa/fieldpool https://raw.githubusercontent.com/hongjinqiu/gometa/master/schema/fieldpool.xsd">
+<fields xmlns="https://github.com/hongjinqiu/gometa/fieldpool" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://github.com/hongjinqiu/gometa/fieldpool https://raw.githubusercontent.com/hongjinqiu/gometa/master/schema/fieldpool.xsd">
 	<field id="ROOT_FIELD" extends="">
 		<!-- <fieldName>ROOT_FIELD</fieldName> -->
 		<displayName>根字段模型定义</displayName>

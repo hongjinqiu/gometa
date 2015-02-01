@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<list-template xmlns="http://www.papersns.com/template" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://github.com/hongjinqiu/gometa/template https://raw.githubusercontent.com/hongjinqiu/gometa/master/schema/schema.xsd">
+<list-template xmlns="https://github.com/hongjinqiu/gometa/template" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://github.com/hongjinqiu/gometa/template https://raw.githubusercontent.com/hongjinqiu/gometa/master/schema/schema.xsd">
 
 	<id>SysUser</id>
 	<selector-id>SysUserSelector</selector-id>
